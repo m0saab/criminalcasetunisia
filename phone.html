@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>iPhone Mockup - شاشة القفل (PIN + Apps)</title>
+<style>
+:root{--bg:#0f1724;--phone:#0b1220;--screen:#07101a;--accent:#1f8feb;--glass:rgba(255,255,255,0.06)}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#071029 0%, #081127 100%);font-family: 'Segoe UI', Tahoma, Arial;direction:rtl;}
+.phone {width:360px;height:780px;border-radius:42px;background:linear-gradient(180deg,var(--phone),#0b1226);box-shadow:0 30px 80px rgba(2,6,23,0.7), inset 0 -6px 18px rgba(255,255,255,0.02);position:relative;padding:18px;}
+.notch{height:34px;width:220px;background:var(--screen);border-radius:20px;margin:0 auto 8px;box-shadow:inset 0 -2px 6px rgba(0,0,0,0.5)}
+.screen{height:calc(100% - 70px);border-radius:18px;background:linear-gradient(180deg,var(--screen),#05101a);padding:16px;box-shadow:inset 0 6px 18px rgba(255,255,255,0.02);position:relative;overflow:hidden;}
+.lockscreen{display:flex;flex-direction:column;align-items:center;color:#e6eef8;padding-top:20px}
+.time{font-size:48px;font-weight:600}
+.date{opacity:0.8;margin-bottom:20px}
+.pin-pad{margin-top:10px}
+.pin-dots{display:flex;gap:10px;margin-bottom:12px}
+.dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.18)}
+.dot.filled{background:var(--accent)}
+input.pin{appearance:none;border:0;background:transparent;color:transparent;caret-color:transparent;height:0;width:0}
+.numpad{display:grid;grid-template-columns:repeat(3,72px);gap:10px;justify-content:center}
+.num{width:72px;height:56px;border-radius:12px;background:var(--glass);display:flex;align-items:center;justify-content:center;font-size:20px;color:#e6eef8;cursor:pointer;user-select:none}
+.message{height:18px;margin-top:8px;color:#ffccc0}
+.apps {display:none;gap:10px;flex-wrap:wrap;margin-top:12px}
+.app{width:75px;height:90px;border-radius:14px;background:rgba(255,255,255,0.02);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#dbeafe;font-size:12px;cursor:pointer;padding:8px;text-align:center}
+.app .badge{background:#ff5a5a;color:#fff;padding:2px 6px;border-radius:12px;font-size:11px;margin-top:6px}
+.app-screen{position:absolute;inset:16px;border-radius:14px;background:#011322;color:#e6eef8;padding:16px;display:none;flex-direction:column}
+.app-screen.active{display:flex}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.headline{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:10px;border-radius:10px;margin-bottom:8px}
+.reminder-list{display:flex;gap:12px}
+.card{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;flex:1}
+.btn{padding:8px 12px;border-radius:10px;background:var(--accent);color:#022037;border:0;cursor:pointer}
+.back{background:transparent;border:0;color:#9fbfe8;cursor:pointer}
+footer.hint{position:absolute;bottom:18px;left:16px;right:16px;text-align:center;color:rgba(255,255,255,0.18);font-size:12px}
+#pongCanvas{background:#000;border:2px solid #fff;margin-top:10px;border-radius:10px;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <!-- Lock Screen -->
+    <div id="lock" class="lockscreen">
+      <div class="time" id="time">12:45</div>
+      <div class="date" id="date">19 مايو 2025</div>
+      <div style="width:100%;display:flex;justify-content:center;">
+        <div style="width:280px;">
+          <div class="pin-dots" id="dots">
+            <div class="dot" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div><div class="dot" id="d4"></div>
+          </div>
+          <div class="message" id="msg"></div>
+          <div class="pin-pad" aria-hidden="false">
+            <input type="password" id="pinInput" class="pin" maxlength="4" aria-label="رمز" />
+            <div class="numpad" id="numpad">
+              <div class="num" data-num="1">1</div>
+              <div class="num" data-num="2">2</div>
+              <div class="num" data-num="3">3</div>
+              <div class="num" data-num="4">4</div>
+              <div class="num" data-num="5">5</div>
+              <div class="num" data-num="6">6</div>
+              <div class="num" data-num="7">7</div>
+              <div class="num" data-num="8">8</div>
+              <div class="num" data-num="9">9</div>
+              <div style="width:72px"></div>
+              <div class="num" data-num="0">0</div>
+              <div class="num" id="del">مسح</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apps -->
+    <div class="apps" id="apps">
+      <div class="app" id="openEmail">البريد<span class="badge" id="mailBadge">10</span></div>
+      <div class="app" id="openRem">التذكير<span class="badge">3</span></div>
+      <div class="app" id="openPong">Pong 2D</div>
+    </div>
+
+    <!-- Email App -->
+    <div id="emailApp" class="app-screen">
+      <div class="topbar"><button class="back" id="backFromEmail">◀ رجوع</button><div>تطبيق البريد — أخبار عامة</div></div>
+      <div style="overflow:auto;padding-right:4px">
+        <div class="headline">إضراب سائقي سيارات الأجرة في الكبرى</div>
+        <div class="headline">قافلة مساعدات فلسطينية تصل ميناء تونس</div>
+        <div class="headline">معرض فني للخط العربي يفتتح وسط العاصمة</div>
+        <div class="headline">بطولة كرة القدم الشاطئية تقام بالساحل</div>
+        <div class="headline">معرض الكتاب الدولي يختتم فعالياته</div>
+        <div class="headline">ورشة عمل حول الاقتصاد الرقمي للشباب</div>
+        <div class="headline">مهرجان موسيقي يختتم بسوسة</div>
+        <div class="headline">حملة توعية بيئية لتنظيف الشواطئ</div>
+        <div class="headline">فعالية رياضية لدعم الصحة العامة</div>
+        <div class="headline">معرض تقني للابتكار والروبوتات</div>
+      </div>
+    </div>
+
+    <!-- Reminder App -->
+    <div id="remApp" class="app-screen">
+      <div class="topbar"><button class="back" id="backFromRem">◀ رجوع</button><div>قائمة التذكير — صاحب محل ملابس</div></div>
+      <div class="reminder-list">
+        <div class="card">
+          <h4>قائمة المشتريات</h4>
+          <ul>
+            <li>قطع قماش قطنية: ٢٠ متر</li>
+            <li>أزرار كبيرة: علبة ×٥٠</li>
+            <li>سحّابات مقاس وسط: ٣٠ قطعة</li>
+            <li>بطاقات سعر جديدة: ١٠٠ بطاقة</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>قائمة المهام</h4>
+          <ol>
+            <li>ترتيب الرفوف وتجديد العرض لملابس الصيف</li>
+            <li>التفاوض مع مورد جديد للأقمشة قبل نهاية الأسبوع</li>
+            <li>نشر عرض ترويجي على إنستاغرام وفيسبوك</li>
+          </ol>
+        </div>
+      </div>
+      <div style="margin-top:14px"><button class="btn" id="doneTask">تمت مهمة</button></div>
+    </div>
+
+    <!-- Pong App -->
+    <div id="pongApp" class="app-screen" style="align-items:center;justify-content:center;">
+      <div class="topbar"><button class="back" id="backFromPong">◀ رجوع</button><div>Pong 2D</div></div>
+      <canvas id="pongCanvas" width="320" height="400"></canvas>
+    </div>
+
+    <footer class="hint">الرمز هو أربعة أرقام. أدخل الرمز للوصول إلى التطبيقات.</footer>
+  </div>
+</div>
+
+<script>
+const CORRECT_PIN="0302"; let current=""; let attempts=0; let lockedUntil=0;
+const dots=[document.getElementById('d1'),document.getElementById('d2'),document.getElementById('d3'),document.getElementById('d4')];
+const msg=document.getElementById('msg'); const numpad=document.getElementById('numpad');
+function updateDots(){for(let i=0;i<4;i++){dots[i].classList.toggle('filled', i<current.length);}}
+function showMessage(t){msg.textContent=t;}
+function checkLock(){const now=Date.now(); if(now<lockedUntil){const s=Math.ceil((lockedUntil-now)/1000); showMessage('مقفول، انتظر '+s+' ثانية'); return true;} return false;}
+function pressDigit(d){if(checkLock())return;if(current.length>=4)return;current+=d;updateDots();if(current.length===4)setTimeout(()=>verifyPin(),200);}
+function delDigit(){if(checkLock())return;current=current.slice(0,-1);updateDots();}
+function verifyPin(){if(current===CORRECT_PIN){showMessage('تم الفتح ✓');openHome();current="";updateDots();attempts=0;}else{attempts++;showMessage('رمز خاطئ');current="";updateDots();if(attempts%3===0){lockedUntil=Date.now()+20000;showMessage('تم تجاوز المحاولات، انتظر 20 ثانية'); const timer=setInterval(()=>{if(!checkLock()){clearInterval(timer);showMessage('');}},500);}}}
+numpad.addEventListener('click', e=>{const target=e.target.closest('.num');if(!target)return;if(target.id==='del')delDigit();else pressDigit(target.dataset.num);});
+function openHome(){document.getElementById('lock').style.display='none';document.getElementById('apps').style.display='flex';showMessage('الهاتف مفتوح! يمكنك فتح التطبيقات الآن.');}
+document.getElementById('openEmail').addEventListener('click', ()=>{document.getElementById('emailApp').classList.add('active');});
+document.getElementById('backFromEmail').addEventListener('click', ()=>{document.getElementById('emailApp').classList.remove('active');});
+document.getElementById('openRem').addEventListener('click', ()=>{document.getElementById('remApp').classList.add('active');});
+document.getElementById('backFromRem').addEventListener('click', ()=>{document.getElementById('remApp').classList.remove('active');});
+document.getElementById('doneTask').addEventListener('click', ()=>{alert('تم وضع علامة على المهمة كمكتملة');document.getElementById('remApp').classList.remove('active');});
+document.getElementById('openPong').addEventListener('click', ()=>{document.getElementById('pongApp').classList.add('active');startPong();});
+document.getElementById('backFromPong').addEventListener('click', ()=>{document.getElementById('pongApp').classList.remove('active');});
+
+// Time
+function updateTime(){const now=new Date();document.getElementById('time').textContent=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');}
+updateTime(); setInterval(updateTime,1000);
+window.addEventListener('keydown', e=>{if(e.key>='0'&&e.key<='9') pressDigit(e.key); if(e.key==='Backspace') delDigit(); if(e.key==='Enter') verifyPin();});
+
+// Pong
+function startPong(){const canvas=document.getElementById('pongCanvas');const ctx=canvas.getContext('2d');let paddleWidth=80,paddleHeight=10,ballRadius=8;let playerX=(canvas.width-paddleWidth)/2,opponentX=(canvas.width-paddleWidth)/2;let ballX=canvas.width/2,ballY=canvas.height/2,ballDX=3,ballDY=3;let rightPressed=false,leftPressed=false;document.addEventListener('keydown', e=>{if(e.key==='ArrowRight') rightPressed=true;if(e.key==='ArrowLeft') leftPressed=true;});document.addEventListener('keyup', e=>{if(e.key==='ArrowRight') rightPressed=false;if(e.key==='ArrowLeft') leftPressed=false;});function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#fff";ctx.fillRect(playerX,canvas.height-paddleHeight-10,paddleWidth,paddleHeight);ctx.fillRect(opponentX,10,paddleWidth,paddleHeight);ctx.beginPath();ctx.arc(ballX,ballY,ballRadius,0,Math.PI*2);ctx.fill();ballX+=ballDX;ballY+=ballDY;if(ballX+ballRadius>canvas.width||ballX-ballRadius<0)ballDX=-ballDX;if(ballY-ballRadius<20){if(ballX>opponentX&&ballX<opponentX+paddleWidth)ballDY=-ballDY;else resetBall();}if(ballY+ballRadius>canvas.height-20){if(ballX>playerX&&ballX<playerX+paddleWidth)ballDY=-ballDY;else resetBall();}if(rightPressed&&playerX+paddleWidth<canvas.width)playerX+=5;if(leftPressed&&playerX>0)playerX-=5;opponentX=ballX-paddleWidth/2;requestAnimationFrame(draw);}function resetBall(){ballX=canvas.width/2;ballY=canvas.height/2;ballDX=3;ballDY=3;}draw();}
+</script>
+</body>
+</html>
