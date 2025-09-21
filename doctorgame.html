@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor's Office Mini Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+body {
+  margin: 0;
+  font-family: 'Press Start 2P', monospace;
+  background: #a3d2f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+#game {
+  width: 95%;
+  max-width: 500px;
+  height: 600px;
+  background: #f0f0f0;
+  border: 4px solid #333;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  padding: 10px;
+}
+#guard {
+  position: absolute;
+  right: 10px;
+  bottom: 60px;
+  width: 150px; 
+  height: 300px;
+  background: url('guard.png') no-repeat center/contain;
+}
+#dialogue {
+  position: absolute;
+  bottom: 10px;
+  width: calc(100% - 20px);
+  background: #222;
+  color: #fff;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  text-align: left;
+  display: none;
+}
+#pass-btn {
+  display:none;
+  position:absolute;
+  bottom:140px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:8px 15px;
+  background:#ffba08;
+  border:none;
+  border-radius:5px;
+  font-weight:bold;
+  cursor:pointer;
+}
+#tasks {
+  position: absolute;
+  top: 10px;
+  width: 100%;
+  display: none;
+  text-align: center;
+}
+.task {
+  margin: 10px auto;
+  padding: 15px;
+  width: 80%;
+  background: linear-gradient(145deg, #ffe066, #ffba08);
+  color: #333;
+  font-size: 12px;
+  border-radius: 8px;
+  border: 2px solid #333;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 4px #999;
+  user-select: none;
+  touch-action: manipulation;
+}
+.task:active { box-shadow: 0 2px #666; transform: translateY(2px);}
+#letter {
+  display: none;
+  background: #fff3cd;
+  padding: 15px;
+  margin-top: 10px;
+  border: 2px solid #333;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  font-size: 12px;
+}
+#timer { font-size:14px; font-weight:bold; margin-top:10px; color:#333; }
+canvas { background:#fff; border-radius:8px; width:100%; height:400px; touch-action:none; }
+#next-btn { display:none; padding:8px 12px; margin-top:10px; background:#ffba08; border:none; border-radius:5px; font-weight:bold; cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="guard"></div>
+  <div id="dialogue"></div>
+  <button id="pass-btn">تخطي</button>
+  <div id="tasks"></div>
+  <div id="letter"></div>
+  <div id="timer"></div>
+</div>
+
+<script>
+// Dialogue typing effect with pass button
+function showDialogue(text, callback) {
+  const dialogue = document.getElementById('dialogue');
+  const passBtn = document.getElementById('pass-btn');
+  const guard = document.getElementById('guard');
+  dialogue.style.display = 'block';
+  dialogue.innerHTML = '';
+  let i = 0;
+  let interval = setInterval(() => {
+    dialogue.innerHTML += text[i];
+    i++;
+    if (i >= text.length) {
+      clearInterval(interval);
+      passBtn.style.display='block';
+      passBtn.onclick = () => { 
+        dialogue.style.display='none'; 
+        passBtn.style.display='none';
+        guard.style.display='none'; // remove guard after first page
+        if(callback) callback(); 
+      };
+    }
+  }, 30);
+}
+
+// Start game
+function startGame() {
+  const text = "الحارس: مرحبا بك في مكتب الدكتور. قبل أن أعطيك الرسالة المهمة، يجب عليك إتمام بعض المهام الضرورية. لا تقلق، كل مهمة بسيطة ولكن تحتاج للتركيز. بعد إنهاء كل هذه المهام، ستتمكن من الحصول على الرسالة مباشرة.";
+  showDialogue(text, startTasks);
+}
+
+// Task manager
+let taskIndex = 0;
+const taskList = [
+  { name:"وصل 5 كابلات", func: cablesGame },
+  { name:"لعبة الذاكرة", func: memoryGame },
+  { name:"أدخل الكود", func: codeTaskGame }
+];
+function startTasks() { taskIndex=0; nextTask(); }
+function nextTask() {
+  if(taskIndex >= taskList.length) return showLetter();
+  taskList[taskIndex].func();
+  taskIndex++;
+}
+
+// --- Mini-games ---
+// 1. Cables like Among Us
+function cablesGame() {
+  const taskDiv = document.getElementById('tasks');
+  taskDiv.style.display='block';
+  taskDiv.innerHTML = '<canvas id="cableCanvas"></canvas><button id="next-btn">تم!</button>';
+  const canvas = document.getElementById('cableCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = 400;
+
+  const colors = ['red','blue','green','yellow','purple'];
+  let leftPorts = [], rightPorts = [];
+  let dragging = null;
+  let cords = [];
+
+  function shuffleArray(array) { return array.sort(()=>0.5-Math.random()); }
+
+  function setupPorts() {
+    leftPorts = [];
+    rightPorts = [];
+    const shuffledColors = shuffleArray([...colors]);
+    shuffledColors.forEach((color,i)=>{
+      leftPorts.push({x:50, y:50+ i*70, color, connected:false});
+      rightPorts.push({x:canvas.width-50, y:50+ i*70, color, connected:false});
+    });
+    cords = [];
+    draw();
+  }
+
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    cords.forEach(c=>{
+      ctx.strokeStyle=c.color;
+      ctx.lineWidth=5;
+      ctx.beginPath();
+      ctx.moveTo(c.from.x,c.from.y);
+      ctx.lineTo(c.to.x,c.to.y);
+      ctx.stroke();
+    });
+    if(dragging){
+      ctx.strokeStyle=dragging.color;
+      ctx.lineWidth=5;
+      ctx.beginPath();
+      ctx.moveTo(dragging.from.x, dragging.from.y);
+      ctx.lineTo(dragging.current.x, dragging.current.y);
+      ctx.stroke();
+    }
+    leftPorts.forEach(p=>{ ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,15,0,Math.PI*2); ctx.fill(); });
+    rightPorts.forEach(p=>{ ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,15,0,Math.PI*2); ctx.fill(); });
+  }
+
+  function getPortUnder(x,y,ports){
+    return ports.find(p=>Math.hypot(p.x - x, p.y - y) < 20 && !p.connected);
+  }
+
+  canvas.addEventListener('mousedown', startDrag);
+  canvas.addEventListener('touchstart', startDrag);
+  canvas.addEventListener('mousemove', moveDrag);
+  canvas.addEventListener('touchmove', moveDrag, {passive:false});
+  canvas.addEventListener('mouseup', endDrag);
+  canvas.addEventListener('touchend', endDrag);
+
+  function getPos(e){
+    if(e.touches) return {x:e.touches[0].clientX - canvas.getBoundingClientRect().left,
+                          y:e.touches[0].clientY - canvas.getBoundingClientRect().top};
+    else return {x:e.offsetX, y:e.offsetY};
+  }
+
+  function startDrag(e){
+    const pos = getPos(e);
+    const port = getPortUnder(pos.x,pos.y,leftPorts);
+    if(port){ dragging={from:port, current:pos, color:port.color}; }
+  }
+  function moveDrag(e){
+    if(!dragging) return;
+    e.preventDefault();
+    dragging.current = getPos(e);
+    draw();
+  }
+  function endDrag(e){
+    if(!dragging) return;
+    const pos = getPos(e);
+    const target = getPortUnder(pos.x,pos.y,rightPorts);
+    if(target && target.color===dragging.color){
+      dragging.from.connected=true;
+      target.connected=true;
+      cords.push({from:dragging.from, to:target, color:dragging.color});
+    }
+    dragging = null;
+    draw();
+    checkComplete();
+  }
+
+  function checkComplete(){
+    if(cords.length===colors.length){
+      document.getElementById('next-btn').style.display='block';
+    }
+  }
+
+  document.getElementById('next-btn').onclick = ()=>{
+    taskDiv.style.display='none';
+    nextTask();
+  }
+
+  setupPorts();
+}
+
+// 2. Memory matching game
+function memoryGame() {
+  const taskDiv = document.getElementById('tasks');
+  taskDiv.style.display='block';
+  taskDiv.innerHTML = '<div>مطابقة البطاقات المتشابهة!</div>';
+  const colors = ['red','blue','green','yellow','purple'];
+  let cardColors = colors.concat(colors);
+  cardColors = cardColors.sort(()=>0.5-Math.random());
+  const cards = [];
+  cardColors.forEach((color,i)=>{
+    const c = document.createElement('div'); c.className='memory-card'; 
+    c.dataset.color=color;
+    c.style.width='60px'; c.style.height='60px'; c.style.display='inline-block'; c.style.margin='5px'; 
+    c.style.background='#888'; c.style.borderRadius='5px';
+    c.addEventListener('click', flipCard);
+    taskDiv.appendChild(c); cards.push(c);
+  });
+  let first=null, second=null, matched=0;
+  function flipCard(e){
+    const card = e.target;
+    if(card===first || card.style.backgroundColor && card.style.backgroundColor!=='rgb(136, 136, 136)') return;
+    card.style.backgroundColor = card.dataset.color;
+    if(!first) first=card;
+    else { second=card;
+      if(first.dataset.color===second.dataset.color){ matched+=2; first=null; second=null; if(matched>=10){ setTimeout(()=>{taskDiv.style.display='none'; nextTask();},500);} }
+      else { setTimeout(()=>{first.style.backgroundColor='#888'; second.style.backgroundColor='#888'; first=null; second=null;},500);}
+    }
+  }
+}
+
+// 3. Code typing with 8 sec timer
+function codeTaskGame() {
+  const codes = ["QJXPLD","MVZKRY","HPTLQN","XNVKBF","RDMYHW"];
+  let currentCode = codes[Math.floor(Math.random()*codes.length)];
+  const taskDiv = document.getElementById('tasks');
+  const timerDiv = document.getElementById('timer');
+  taskDiv.style.display='block';
+  taskDiv.innerHTML='<div id="code-task">أدخل الكود بسرعة!</div>';
+  const input = document.createElement('input'); input.id='code-input'; input.type='text'; taskDiv.appendChild(input);
+  input.focus();
+  let success=false;
+  let timeLeft = 8;
+  timerDiv.innerText = 'الوقت: ' + timeLeft;
+  const timerInterval = setInterval(()=>{ 
+    timeLeft--; 
+    timerDiv.innerText = 'الوقت: ' + timeLeft;
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      if(!success){ codeTaskGame(); }
+    }
+  },1000);
+  input.addEventListener('input',(e)=>{ 
+    if(input.value.toUpperCase()===currentCode){ 
+      success=true; 
+      clearInterval(timerInterval); 
+      timerDiv.innerText=''; 
+      taskDiv.style.display='none'; 
+      nextTask(); 
+    }
+  });
+  document.getElementById('code-task').innerHTML='أدخل الكود التالي بسرعة: '+currentCode;
+}
+
+// Show final letter
+function showLetter() {
+  const letterDiv = document.getElementById('letter');
+  letterDiv.style.display='block';
+  letterDiv.innerText = `Letter from Dr. Layla:
+في مرحلة لاحقة من التحقيق، عثرنا على بقع دم أخرى في مكان الجريمة. وبعد الفحوصات، تأكد لنا أن فصيلة هذا الدم هي B+.
+
+الخبر السار هو أن هذه المعلومة ستساعدنا في استبعاد سليم كمشتبه به.
+
+لكن الخبر السيء هو أن كل من غسان ومريم يحملان هذه الفصيلة، لذلك لا زال لدينا التباس في الأمر.`;
+}
+
+// Start
+startGame();
+</script>
+</body>
+</html>
