@@ -1,211 +1,224 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>Criminal Case Tunisia</title>
-  <style>
-    body {
-      background-color: #121212;
-      color: #f0f0f0;
-      font-family: 'Tahoma', sans-serif;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
-    }
-    header {
-      text-align: center;
-      padding: 25px;
-      background-color: #1e1e1e;
-    }
-    header img {
-      height: 120px; /* bigger logo */
-      transition: transform 0.3s;
-    }
-    header img:hover {
-      transform: scale(1.05);
-    }
-    .cases {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      padding: 30px;
-    }
-    .case-card {
-      background-color: #1e1e1e;
-      border-radius: 15px;
-      overflow: hidden;
-      width: 220px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .case-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.7);
-    }
-    .case-card img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-    }
-    .case-card h3 {
-      text-align: center;
-      padding: 12px;
-      font-size: 1.15em;
-      color: #ff6666;
-    }
-    .content {
-      padding: 25px;
-      display: none;
-      background-color: #1e1e1e;
-      margin: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-    .options label {
-      display: block;
-      margin: 10px 0;
-      cursor: pointer;
-      padding: 8px 12px;
-      border-radius: 8px;
-      transition: background 0.2s;
-    }
-    .options label:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px 22px;
-      background-color: #ff4444;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1em;
-      transition: background 0.3s, transform 0.2s;
-    }
-    button:hover {
-      background-color: #ff6666;
-      transform: scale(1.05);
-    }
-    footer {
-      text-align: center;
-      padding: 25px;
-      background-color: #1e1e1e;
-      margin-top: 30px;
-    }
-    footer img {
-      height: 60px; /* Instagram logo instead of text */
-      transition: transform 0.3s;
-    }
-    footer img:hover {
-      transform: scale(1.1);
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criminal Case Tunisia</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f0f0f0;
+      font-family: 'Tahoma', sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      padding: 25px;
+      background-color: #1e1e1e;
+    }
+    header img {
+      height: 120px; /* bigger logo */
+      transition: transform 0.3s;
+    }
+    header img:hover {
+      transform: scale(1.05);
+    }
+    .cases {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 30px;
+    }
+    .case-card {
+      background-color: #1e1e1e;
+      border-radius: 15px;
+      overflow: hidden;
+      width: 220px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .case-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.7);
+    }
+    .case-card img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+    .case-card h3 {
+      text-align: center;
+      padding: 12px;
+      font-size: 1.15em;
+      color: #ff6666;
+    }
+    .content {
+      padding: 25px;
+      display: none;
+      background-color: #1e1e1e;
+      margin: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .options label {
+      display: block;
+      margin: 10px 0;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .options label:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 22px;
+      background-color: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background-color: #ff6666;
+      transform: scale(1.05);
+    }
+    footer {
+      text-align: center;
+      padding: 25px;
+      background-color: #1e1e1e;
+      margin-top: 30px;
+    }
+    footer img {
+      height: 60px; /* Instagram logo instead of text */
+      transition: transform 0.3s;
+    }
+    footer img:hover {
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <img src="logo.png" alt="Criminal Case Tunisia Logo">
-  </header>
+  <audio id="background-music" src="sound/1.mp3" preload="auto"></audio>
 
-  <div class="cases">
-    <div class="case-card" onclick="showCase(1)">
-      <img src="1.jpg" alt="قضية 1">
-      <h3>القضية 1: شكون قتل سلمى</h3>
-    </div>
-    <div class="case-card" onclick="showCase(2)">
-      <img src="2.jpg" alt="قضية 2">
-      <h3>القضية 2: جريمة في منوبة</h3>
-    </div>
-    <div class="case-card" onclick="showCase(3)">
-      <img src="3.jpg" alt="قضية 3">
-      <h3>القضية 3: MC Dali</h3>
-    </div>
-  </div>
+  <header>
+    <img src="logo.png" alt="Criminal Case Tunisia Logo">
+  </header>
 
-  <!-- محتوى القضايا يبقى كما هو -->
-  <div id="case1" class="content">
-    <h2>القضية 1: شكون قتل سلمى</h2>
-    <div class="options">
-      <label><input type="radio" name="c1"> خمّنتها بالكاميرا</label>
-      <label><input type="radio" name="c1" data-correct="true"> خمّنتها من الإيميلات في التليفون</label>
-      <label><input type="radio" name="c1"> خمّنتها من صورة الكرهبة في البحيرة</label>
-      <label><input type="radio" name="c1"> خمّنتها بتقرير الطبيب</label>
-    </div>
-    <button onclick="checkAnswer(1)">خمّنتها — تحقق</button>
-    <button onclick="showSolution(1)">استسلمت — وريني الحل</button>
-    <div id="solution1" style="display:none; margin-top:15px;">
+  <div class="cases">
+    <div class="case-card" onclick="showCase(1)">
+      <img src="1.jpg" alt="قضية 1">
+      <h3>القضية 1: شكون قتل سلمى</h3>
+    </div>
+    <div class="case-card" onclick="showCase(2)">
+      <img src="2.jpg" alt="قضية 2">
+      <h3>القضية 2: جريمة في منوبة</h3>
+    </div>
+    <div class="case-card" onclick="showCase(3)">
+      <img src="3.jpg" alt="قضية 3">
+      <h3>القضية 3: MC Dali</h3>
+    </div>
+  </div>
+
+  <!-- محتوى القضايا يبقى كما هو -->
+  <div id="case1" class="content">
+    <h2>القضية 1: شكون قتل سلمى</h2>
+    <div class="options">
+      <label><input type="radio" name="c1"> خمّنتها بالكاميرا</label>
+      <label><input type="radio" name="c1" data-correct="true"> خمّنتها من الإيميلات في التليفون</label>
+      <label><input type="radio" name="c1"> خمّنتها من صورة الكرهبة في البحيرة</label>
+      <label><input type="radio" name="c1"> خمّنتها بتقرير الطبيب</label>
+    </div>
+    <button onclick="checkAnswer(1)">خمّنتها — تحقق</button>
+    <button onclick="showSolution(1)">استسلمت — وريني الحل</button>
+    <div id="solution1" style="display:none; margin-top:15px;">
 <p>كان الهاتف هو العنصر الأساسي في كشف الجريمة. رمز القفل ما كانش سهل، لكن تاريخ ميلاد توأم سلمى كان هو الحل. زوجها السابق صرّح أنّه رجع لتونس في يوم عيد ميلادهم، وبعد مراجعة سجلّات الرحلات اكتشفنا أنّ آخر رحلة له كانت يوم 3 فيفري، وبالتالي الرمز هو 0302. داخل الهاتف، وتحديدًا في قسم البريد الإلكتروني، ظهرت دلائل تفضح كريم في مناسبتين: الأولى ادّعى أنّه شاهد مباراة لريال مدريد، بينما الرسائل الإلكترونية أكدت أنّ الدوريات الأوروبية لكرة القدم كانت متوقفة مؤقتًا وفقًا للأخبار الواردة في البريد الإلكتروني. أيضًا، ادّعى أنّه رجع للبيت بسيارة أجرة، لكن الرسائل نفسها أشارت إلى وجود إضراب للتاكسيات. الحقيقة أنّه هو الفاعل، لأنّ سلمى استحوذت على منزله الفخم، والأهم من ذلك أنها رفضت إدراجه كأب للتوأم.</p>
-    </p>
-    </div>
-  </div>
+    </p>
+    </div>
+  </div>
 
-  <div id="case2" class="content">
-    <h2>القضية 2: جريمة في منوبة</h2>
-    <div class="options">
-      <label><input type="radio" name="c2" data-correct="true"> خمّنتها على خاطر واحد كذب في أنشطته</label>
-      <label><input type="radio" name="c2"> خمّنتها من صورة الكاميرا</label>
-      <label><input type="radio" name="c2"> خمّنتها من طبيعة العلاقات بين الشخصيات</label>
-      <label><input type="radio" name="c2"> خمّنتها من كلام الشاهد</label>
-    </div>
-    <button onclick="checkAnswer(2)">خمّنتها — تحقق</button>
-    <button onclick="showSolution(2)">استسلمت — وريني الحل</button>
-    <div id="solution2" style="display:none; margin-top:15px;">
-        <p>القاتلة في هذه القضية هي مريم. كان دافعها المعاملة السيئة المستمرة من طرف آدم، الذي قام بتسريب صورها والإساءة إليها. في شهادتها، ادّعت مريم أنّها نامت مبكرًا ولم تغادر منزلها، لكن الحقيقة أنّها كذبت. فقد خرجت خلسة في الليل بعد أن طلبت من آدم أن يلتقيا، وهناك نفّذت جريمتها. ما فضحها هو تذكرة شراء من مجلة، إذ اشترت وجبة خفيفة قبل لقائه، وظهر تاريخ عملية الشراء على الفاتورة متطابقًا مع وقت وقوع الجريمة، وهو الدليل الذي أدانها.
-    </p>
-    </div>
-  </div>
+  <div id="case2" class="content">
+    <h2>القضية 2: جريمة في منوبة</h2>
+    <div class="options">
+      <label><input type="radio" name="c2" data-correct="true"> خمّنتها على خاطر واحد كذب في أنشطته</label>
+      <label><input type="radio" name="c2"> خمّنتها من صورة الكاميرا</label>
+      <label><input type="radio" name="c2"> خمّنتها من طبيعة العلاقات بين الشخصيات</label>
+      <label><input type="radio" name="c2"> خمّنتها من كلام الشاهد</label>
+    </div>
+    <button onclick="checkAnswer(2)">خمّنتها — تحقق</button>
+    <button onclick="showSolution(2)">استسلمت — وريني الحل</button>
+    <div id="solution2" style="display:none; margin-top:15px;">
+        <p>القاتلة في هذه القضية هي مريم. كان دافعها المعاملة السيئة المستمرة من طرف آدم، الذي قام بتسريب صورها والإساءة إليها. في شهادتها، ادّعت مريم أنّها نامت مبكرًا ولم تغادر منزلها، لكن الحقيقة أنّها كذبت. فقد خرجت خلسة في الليل بعد أن طلبت من آدم أن يلتقيا، وهناك نفّذت جريمتها. ما فضحها هو تذكرة شراء من مجلة، إذ اشترت وجبة خفيفة قبل لقائه، وظهر تاريخ عملية الشراء على الفاتورة متطابقًا مع وقت وقوع الجريمة، وهو الدليل الذي أدانها.
+    </p>
+    </div>
+  </div>
 
-  <div id="case3" class="content">
-    <h2>القضية 3: MC Dali</h2>
-    <div class="options">
-      <label><input type="radio" name="c3"> خمّنتها من الخريطة</label>
-      <label><input type="radio" name="c3"> خمّنتها من الأشياء اللي لقيتها في الجيب</label>
-      <label><input type="radio" name="c3" data-correct="true"> استعملت حسابات السوشيال ميديا</label>
-      <label><input type="radio" name="c3"> كلام الطبيب خلاني نخمن</label>
-    </div>
-    <button onclick="checkAnswer(3)">خمّنتها — تحقق</button>
-    <button onclick="showSolution(3)">استسلمت — وريني الحل</button>
-    <div id="solution3" style="display:none; margin-top:15px;">
-            <p>االقاتلة في هذه القضية هي لاميا، وكان دافعها عاطفي بالأساس. فقد تعرّفت على MC Dali عبر مواقع التواصل الاجتماعي، وبعد فترة من الحديث بينهما شعرت أنّه أصبح بارداً ويتجاهلها، الأمر الذي ولّد عندها شعوراً بالغضب والرغبة في الانتقام. الدليل الحاسم جاء من أرشيف قصصها على إنستغرام؛ فعند الدخول إلى حساب MC Dali الحقيقي على التطبيق، يظهر ضمن قائمة متابَعيه حساب لاميا. وفي إحدى القصص القديمة على حسابها، ظهر بالصدفة في الخلفية مسدس مطابق للسلاح الذي استُعمل في الجريمة، وهو ما كشف حقيقتها..
+  <div id="case3" class="content">
+    <h2>القضية 3: MC Dali</h2>
+    <div class="options">
+      <label><input type="radio" name="c3"> خمّنتها من الخريطة</label>
+      <label><input type="radio" name="c3"> خمّنتها من الأشياء اللي لقيتها في الجيب</label>
+      <label><input type="radio" name="c3" data-correct="true"> استعملت حسابات السوشيال ميديا</label>
+      <label><input type="radio" name="c3"> كلام الطبيب خلاني نخمن</label>
+    </div>
+    <button onclick="checkAnswer(3)">خمّنتها — تحقق</button>
+    <button onclick="showSolution(3)">استسلمت — وريني الحل</button>
+    <div id="solution3" style="display:none; margin-top:15px;">
+            <p>االقاتلة في هذه القضية هي لاميا، وكان دافعها عاطفي بالأساس. فقد تعرّفت على MC Dali عبر مواقع التواصل الاجتماعي، وبعد فترة من الحديث بينهما شعرت أنّه أصبح بارداً ويتجاهلها، الأمر الذي ولّد عندها شعوراً بالغضب والرغبة في الانتقام. الدليل الحاسم جاء من أرشيف قصصها على إنستغرام؛ فعند الدخول إلى حساب MC Dali الحقيقي على التطبيق، يظهر ضمن قائمة متابَعيه حساب لاميا. وفي إحدى القصص القديمة على حسابها، ظهر بالصدفة في الخلفية مسدس مطابق للسلاح الذي استُعمل في الجريمة، وهو ما كشف حقيقتها..
 </p>
-    </div>
-  </div>
+    </div>
+  </div>
 
-  <footer>
-    <a href="https://www.instagram.com/criminal.case.tunisia/" target="_blank">
-      <img src="insta_logo.png" alt="Instagram Logo">
-    </a>
-  </footer>
+  <footer>
+    <a href="https://www.instagram.com/criminal.case.tunisia/" target="_blank">
+      <img src="insta_logo.png" alt="Instagram Logo">
+    </a>
+  </footer>
 
-  <script>
-    function showCase(num) {
-      document.querySelectorAll('.content').forEach(el => el.style.display = 'none');
-      document.getElementById('case' + num).style.display = 'block';
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+  <script>
+    let isMusicPlaying = false;
 
-    function checkAnswer(num) {
-      const options = document.querySelectorAll('#case'+num+' .options input');
-      let selected = Array.from(options).find(opt => opt.checked);
-      if (!selected) { alert('إختر إجابة!'); return; }
-      const solutionDiv = document.getElementById('solution'+num);
-      if (selected.dataset.correct === 'true') {
-        solutionDiv.style.display = 'block';
-      } else {
-        alert('إجابة خاطئة! جرّب مرّة أخرى.');
-      }
-    }
+    function showCase(num) {
+      // Play the music on the first user interaction
+      if (!isMusicPlaying) {
+        const music = document.getElementById('background-music');
+        music.play().then(() => {
+          isMusicPlaying = true;
+        }).catch(error => {
+          console.log("Music autoplay blocked by the browser.");
+        });
+      }
 
-    function showSolution(num) {
-      document.getElementById('solution'+num).style.display = 'block';
-    }
-  </script>
+      document.querySelectorAll('.content').forEach(el => el.style.display = 'none');
+      document.getElementById('case' + num).style.display = 'block';
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function checkAnswer(num) {
+      const options = document.querySelectorAll('#case'+num+' .options input');
+      let selected = Array.from(options).find(opt => opt.checked);
+      if (!selected) { alert('إختر إجابة!'); return; }
+      const solutionDiv = document.getElementById('solution'+num);
+      if (selected.dataset.correct === 'true') {
+        solutionDiv.style.display = 'block';
+      } else {
+        alert('إجابة خاطئة! جرّب مرّة أخرى.');
+      }
+    }
+
+    function showSolution(num) {
+      document.getElementById('solution'+num).style.display = 'block';
+    }
+  </script>
 </body>
 </html>
-
-
