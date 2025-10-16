@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Fake Smartphone PIN Lock (PIN: 2007)</title>
+<style>
+:root{--bg:#0b1220;--phone:#0f1724;--accent:#3b82f6;--text:#e6eef8;--key-text:#000}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+body{display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#071026 0%,#021019 100%);color:var(--text)}
+.phone{width:360px;height:720px;border-radius:34px;padding:0;background:linear-gradient(180deg,var(--phone),#071226);box-shadow:0 30px 60px rgba(2,6,23,.7),0 6px 18px rgba(3,6,12,.5);position:relative;overflow:hidden}
+.screen.locked{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:70px;box-sizing:border-box;background-image:url('wllp1.jpg');background-size:cover;background-position:center}
+.time{font-size:40px;font-weight:700;margin-bottom:6px;text-shadow:0 6px 18px rgba(0,0,0,.6)}
+.date{font-size:14px;opacity:.95;margin-bottom:24px;text-shadow:0 4px 12px rgba(0,0,0,.45)}
+.pin-indicator{display:flex;gap:14px;margin-bottom:18px}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.6);display:inline-block;box-sizing:border-box;background:transparent;transition:all .18s ease}
+.dot.filled{background:var(--text);border-color:transparent;transform:scale(1.08)}
+.msg{height:20px;font-size:13px;opacity:.95;margin-bottom:18px}
+.keypad{width:85%;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:auto;margin-bottom:44px}
+.key{background:rgba(255,255,255,.08);border-radius:14px;padding:16px 0;text-align:center;font-size:22px;user-select:none;cursor:pointer;box-shadow:inset 0 -1px 0 rgba(255,255,255,.02);transition:transform .08s ease,background .12s;color:var(--key-text)}
+.key:active{transform:scale(.98)}
+.key.small{font-size:14px;padding:12px 0}
+.home{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;padding-top:36px;gap:18px;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.06));overflow:auto}
+.home .title{font-size:20px;font-weight:700}
+.app-grid{display:grid;grid-template-columns:repeat(2,100px);gap:20px;padding:6px;justify-content:center}
+.app{width:100px;height:100px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;user-select:none;text-align:center;line-height:1.1;padding:8px;font-size:14px}
+#facebook-feed,#messages-feed{display:none;position:absolute;left:14px;right:14px;top:120px;max-height:56%;overflow:auto;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:12px;padding:12px;backdrop-filter:blur(6px);box-shadow:0 10px 30px rgba(2,6,23,.6);color:var(--text);z-index:60}
+#facebook-feed article,#messages-feed article{margin-bottom:12px;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent)}
+#facebook-feed video,#messages-feed video{width:100%;border-radius:8px;background:#000}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="screen locked" id="lockScreen" aria-label="lock screen">
+    <div class="time" id="time">12:08</div>
+    <div class="date" id="date">Friday • October 15</div>
+    <div class="pin-indicator" id="dots">
+      <span class="dot" data-index="0"></span>
+      <span class="dot" data-index="1"></span>
+      <span class="dot" data-index="2"></span>
+      <span class="dot" data-index="3"></span>
+    </div>
+    <div class="msg" id="msg">Enter PIN</div>
+    <div class="keypad" id="keypad">
+      <div class="key" style="color:black">1</div><div class="key" style="color:black">2</div><div class="key" style="color:black">3</div>
+      <div class="key" style="color:black">4</div><div class="key" style="color:black">5</div><div class="key" style="color:black">6</div>
+      <div class="key" style="color:black">7</div><div class="key" style="color:black">8</div><div class="key" style="color:black">9</div>
+      <div class="key small action-key" id="emergency">Emergency</div>
+      <div class="key" style="color:black">0</div><div class="key small action-key" id="back">⌫</div>
+    </div>
+  </div>
+  <div class="home" id="home">
+    <div class="title">Phone Unlocked</div>
+    <div class="app-grid">
+      <div class="app" id="app-facebook">Facebook</div>
+      <div class="app" id="app-messenger">Messenger</div>
+    </div>
+  </div>
+
+  <section id="facebook-feed" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <strong style="font-size:15px">Facebook — feed</strong>
+      <button id="fb-close" style="background:transparent;border:0;color:var(--text);opacity:.9;cursor:pointer;font-size:14px">إغلاق ✕</button>
+    </div>
+  
+    <article>
+      <div style="font-weight:700;margin-bottom:6px">tunisiaweathernews</div>
+      <div>إليك موجز لحالة الطقس في <strong>٦ آب ٢٠٢٥</strong> في تونس العاصمة:</div>
+      <ul>
+        <li>الحرارة العظمى كانت حوالي <strong>32.4 °C</strong></li>
+        <li>الحرارة الصغرى حوالي <strong>22.1 °C</strong></li>
+        <li>متوسط الحرارة حوالي <strong>27.3 °C</strong></li>
+        <li>توقع يوم دافئ إلى حار، مع احتمال وجود فترات شمسية.</li>
+      </ul>
+    </article>
+  
+    <article>
+      <div style="font-weight:700;margin-bottom:6px">footballdailyroom</div>
+      <div>أهم أخبار كرة القدم ليوم <strong>٦ أوت ٢٠٢٥</strong>:</div>
+      <ul>
+        <li>نادي إيفرتون الإنجليزي حاول استعارة جاك غريليش من مانشستر سيتي لموسم واحد.</li>
+        <li>نيوكاسل قرر استبعاد المهاجم السويدي ألكسندر إسحاق من الفريق الأول.</li>
+        <li>إنتر ميلان يستعد لتقديم عرض أقوى من أجل التعاقد مع النيجيري لوكمان.</li>
+      </ul>
+    </article>
+  
+    <article>
+      <div style="font-weight:700;margin-bottom:6px">wassim.wer</div>
+      <div>الله أكبر، محل الإذاعة اليوم بعد الماتش سمعت الخبر هذا... الله يرحمك خويا، كنت بش تولي رونالدو الجديد، و إذا حكاية السّم صحيحة، ربي يجيبلك حقّك إن شاء الله 💔</div>
+      <video controls>
+        <source src="video1.mp4" type="video/mp4">
+      </video>
+    </article>
+  
+    <article>
+      <div style="font-weight:700;margin-bottom:6px">footballleaguetunisia</div>
+      <div>إن لله وإن إليه راجعون، تعازينا الحارة لعائلة مكي غزال، ولفريق إتحاد. 🕊️</div>
+    </article>
+  
+    <article>
+      <div style="font-weight:700;margin-bottom:6px">khawlaprv</div>
+      <div>Happy three-year anniversary to my one and only, Barhoum ❤️ Every moment with you feels like magic — here’s to forever, my love. 💫❤️</div>
+    </article>
+  
+    <article>
+      <div style="font-weight:700;margin-bottom:6px">footballrecaptn</div>
+      <div>آخر الأخبار الرياضية، زورونا على صفحة التويتر <strong>@footballrecaptn</strong> ⚽</div>
+    </article>
+  </section>
+  
+
+  <section id="messages-feed" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <strong style="font-size:15px">Messages</strong>
+      <button id="msg-close" style="background:transparent;border:0;color:var(--text);opacity:.9;cursor:pointer;font-size:14px">إغلاق ✕</button>
+    </div>
+    <div class="contacts">
+      <div class="contact" data-contact="khawla" style="cursor:pointer;font-weight:700;margin-bottom:6px">Khawla</div>
+      <div class="contact" data-contact="achref" style="cursor:pointer;font-weight:700;margin-bottom:6px">Coach Achref 💪</div>
+      <div class="contact" data-contact="wissem" style="cursor:pointer;font-weight:700;margin-bottom:6px">Wissem</div>
+      <div class="contact" data-contact="barhoum" style="cursor:pointer;font-weight:700;margin-bottom:6px">Barhoum</div>
+    </div>
+    <div class="chat-content" id="chat-content"></div>
+  </section>
+
+</div>
+<script>
+const CORRECT_PIN='2007';
+const lockScreen=document.getElementById('lockScreen');
+const dots=Array.from(document.querySelectorAll('.dot'));
+const msg=document.getElementById('msg');
+const keypad=document.getElementById('keypad');
+const home=document.getElementById('home');
+const fbApp=document.getElementById('app-facebook');
+const fbFeed=document.getElementById('facebook-feed');
+const fbClose=document.getElementById('fb-close');
+const msgApp=document.getElementById('app-messenger');
+const messagesFeed=document.getElementById('messages-feed');
+const msgClose=document.getElementById('msg-close');
+const chatContent=document.getElementById('chat-content');
+let entry='';
+
+const chats = {
+  khawla: ['khawla1.png','khawla2.png','khawla3.png'],
+  achref: ['coach1.png','coach2.png','coach3.png'],
+  wissem: ['wissem1.png','wissem2.png','wissem3.png'],
+  barhoum: ['barhoum1.png','barhoum2.png','barhoum3.png']
+};
+
+function setDots(len){dots.forEach((d,i)=>d.classList.toggle('filled',i<len));}
+function resetEntry(){entry='';setDots(0);msg.textContent='Enter PIN';}
+function unlockPhone(){lockScreen.style.display='none';home.style.display='flex';fbFeed.style.display='none';fbFeed.setAttribute('aria-hidden','true');messagesFeed.style.display='none';msg.textContent='';}
+
+keypad.addEventListener('click',e=>{const key=e.target.closest('.key');if(!key)return;if(key.id==='back'){entry=entry.slice(0,-1);setDots(entry.length);return;}if(key.id==='emergency'){msg.textContent='Emergency call';setTimeout(()=>msg.textContent='Enter PIN',800);return;}const val=key.textContent.trim();if(!/^[0-9]$/.test(val))return;if(entry.length>=4)return;entry+=val;setDots(entry.length);if(entry.length===4){if(entry===CORRECT_PIN){unlockPhone();}else{msg.textContent='Incorrect PIN';setTimeout(()=>resetEntry(),700);}}});
+
+fbApp.addEventListener('click',()=>{if(window.getComputedStyle(home).display==='none'){msg.textContent='Unlock to open Facebook';setTimeout(()=>msg.textContent='Enter PIN',900);return;}fbFeed.style.display=(fbFeed.style.display==='block')?'none':'block';fbFeed.setAttribute('aria-hidden',fbFeed.style.display==='none'?'true':'false');fbFeed.scrollTop=0;});
+fbClose.addEventListener('click',()=>{fbFeed.style.display='none';fbFeed.setAttribute('aria-hidden','true');});
+
+msgApp.addEventListener('click',()=>{if(window.getComputedStyle(home).display==='none'){msg.textContent='Unlock to open Messages';setTimeout(()=>msg.textContent='Enter PIN',900);return;}messagesFeed.style.display=(messagesFeed.style.display==='block')?'none':'block';messagesFeed.setAttribute('aria-hidden',messagesFeed.style.display==='none'?'true':'false');chatContent.innerHTML='';});
+msgClose.addEventListener('click',()=>{messagesFeed.style.display='none';messagesFeed.setAttribute('aria-hidden','true');chatContent.innerHTML='';});
+
+document.querySelectorAll('.contact').forEach(c=>c.addEventListener('click',()=>{
+  const contact = c.dataset.contact;
+  chatContent.innerHTML = chats[contact].map(img => `<img src='${img}' style='width:100%;border-radius:8px;margin-bottom:8px'>`).join('');
+}));
+</script>
+</body>
+</html>
