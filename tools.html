@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone Tools</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .app {
+      border: 1px solid #555;
+      border-radius: 20px;
+      width: 300px;
+      background: #111;
+      text-align: center;
+      padding: 20px;
+    }
+    button {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      background: #333;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #555;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #bbb;
+    }
+    #fingerprint {
+      display: none;
+      width: 100px;
+      margin-top: 20px;
+    }
+    #truecaller {
+      display: none;
+      margin-top: 20px;
+    }
+    input {
+      padding: 10px;
+      width: 80%;
+      border-radius: 10px;
+      border: none;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h2>Tools</h2>
+    <button id="fingerBtn">Fingerprint Checker</button>
+    <button id="mapsBtn">Google Maps</button>
+    <button id="truecallerBtn">Truecaller</button>
+
+    <img id="fingerprint" src="fingerprint1.png" alt="Fingerprint">
+    <div id="message"></div>
+
+    <div id="truecaller">
+      <input type="text" id="numberInput" placeholder="Enter number">
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const fingerBtn = document.getElementById('fingerBtn');
+    const fingerprint = document.getElementById('fingerprint');
+    const message = document.getElementById('message');
+    const mapsBtn = document.getElementById('mapsBtn');
+    const truecallerBtn = document.getElementById('truecallerBtn');
+    const truecaller = document.getElementById('truecaller');
+    const numberInput = document.getElementById('numberInput');
+    const result = document.getElementById('result');
+
+    fingerBtn.addEventListener('click', () => {
+      fingerprint.style.display = 'block';
+      message.textContent = 'Scanning fingerprint...';
+      setTimeout(() => {
+        message.textContent = 'Fingerprint scan failed.';
+      }, 5000);
+    });
+
+    mapsBtn.addEventListener('click', () => {
+      window.open('https://www.google.com/maps/place/Lyc%C3%A9e+Secondaire+B%C3%A8chir+Nabhani,+Rue+Slaheddine+Bouchoucha,+Hammam+Lif/@36.7282488,10.3333039,332m/data=!3m1!1e3!4m9!1m2!2m1!1sminicipalie+hammem+linf!3m5!1s0x12fd49252045ff0d:0x6e99db43faad8407!8m2!3d36.7278841!4d10.3358436!16s%2Fg%2F11b8t9wjbw!5m1!1e4?entry=ttu&g_ep=EgoyMDI1MTAxNC4wIKXMDSoASAFQAw%3D%3D', '_blank');
+    });
+
+    truecallerBtn.addEventListener('click', () => {
+      truecaller.style.display = 'block';
+    });
+
+    numberInput.addEventListener('input', () => {
+      if (numberInput.value === '0909091234') {
+        result.textContent = 'إكرام شافعي، زوجة مازن علوي';
+      } else if (numberInput.value.trim() === '') {
+        result.textContent = '';
+      } else {
+        result.textContent = 'User not found';
+      }
+    });
+  </script>
+</body>
+</html>
