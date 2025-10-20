@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Criminal Case Notebook</title>
+  <style>
+    :root{--paper:#fff9c4;--note-bg:#fff59d;--ink:#222;--line:#e6d56b}
+    html,body{height:100%;margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;background:#f3e9c0}
+    .book-wrap{height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+    .notebook{width:360px;max-width:92vw;height:600px;max-height:86vh;position:relative;perspective:1200px;
+      background:linear-gradient(180deg,rgba(0,0,0,0.06) 0%,rgba(255,255,255,0.02) 100%);
+      border-radius:10px;box-shadow:0 20px 50px rgba(0,0,0,0.25);overflow:visible;}
+    .spiral{position:absolute;left:-28px;top:28px;bottom:28px;width:56px;display:flex;flex-direction:column;align-items:center;justify-content:space-around;}
+    .spiral .ring{width:12px;height:14px;border-radius:8px;background:linear-gradient(180deg,#333,#666);box-shadow:inset 0 -2px 0 rgba(255,255,255,0.15)}
+    .pages{position:relative;overflow:hidden;height:100%;border-radius:8px}
+    .page{position:absolute;left:0;top:0;width:100%;height:100%;background:var(--paper);border-radius:8px;display:flex;flex-direction:column;transform-origin:left center;transition:transform 400ms cubic-bezier(.2,.9,.2,1), box-shadow 300ms;backface-visibility:hidden;}
+    .page .paper{flex:1;padding:28px 46px 28px 64px;background:
+      repeating-linear-gradient(to bottom, transparent 0 26px, var(--line) 26px, transparent 27px),
+      linear-gradient(90deg,#fff 0,#fff 100%);
+      color:var(--ink);position:relative;overflow:auto;border-radius:6px;font-family:'Caveat', cursive;font-size:18px;line-height:1.8}
+    .page h2{margin:8px 0 12px;font-size:20px;text-align:center;font-weight:bold}
+    .note{white-space:pre-wrap}
+    .page.stack{transform:translateX(10px) scale(.98)}
+    .page.current{z-index:50;box-shadow:0 30px 50px rgba(0,0,0,0.25)}
+    .page.flip-left{transform:rotateY(-160deg) translateX(-10%);box-shadow:0 20px 40px rgba(0,0,0,0.35)}
+    .page.flip-right{transform:rotateY(160deg) translateX(10%);box-shadow:0 20px 40px rgba(0,0,0,0.35)}
+    .controls{position:absolute;right:12px;bottom:12px;display:flex;gap:8px}
+    .btn{background:rgba(255,255,255,0.9);border-radius:8px;padding:8px 10px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 6px 14px rgba(0,0,0,0.08);cursor:pointer;font-weight:600}
+    .hint{position:absolute;left:18px;bottom:12px;font-size:13px;color:#6b5b2e;background:rgba(255,250,230,0.8);padding:6px 8px;border-radius:8px}
+    @media (max-width:420px){.notebook{height:86vh}}
+    .paper::-webkit-scrollbar{width:8px}
+    .paper::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.08);border-radius:8px}
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="book-wrap">
+    <div class="notebook" id="notebook">
+      <div class="spiral" aria-hidden="true">
+        <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      </div>
+      <div class="pages" id="pages"></div>
+      <div class="controls">
+        <button class="btn" id="prev">◀ السابق</button>
+        <button class="btn" id="next">التالي ▶</button>
+      </div>
+      <div class="hint">اسحب أو استعمل الأسهم لتقليب الصفحات</div>
+    </div>
+  </div>
+
+  <script>
+    const sampleNotes = [
+      {title:'Criminal Case Notebook', body:''},
+      {title:'1. جيهان بن يوسف والاتصال المجهول', body:`كانت جيهان تجري مكالمات هاتفية طويلة جدًا الأسبوع الماضي مع هذا الرقم 0909091234، ولم يتم التعرف على هوية الرقم بعد.
+
+عثر المحققون في منزل جيهان على عدة تذاكر قطار لمدن مختلفة غير حمام الأنف، تعود لأسابيع ماضية. أجرت جيهان فحصًا طبيًا في مستشفى خاص قبل أسبوعين من الجريمة، لكنها رفضت الكشف عن طبيعة الفحص.`},
+      {title:'2. وهبي سلطاني (زوج الأم) والماضي المشترك', body:`شوهد وهبي سلطاني يشتري باقة زهور بيضاء في صباح يوم 5 أكتوبر (قبل الجريمة بيوم)، لكن لم يُعرف لمن هي.
+
+ادّعى وهبي في تحقيق جانبي أنه كان في الماضي يعمل كفني إضاءة في المسرح، مما يمنحه بعض الخبرة في التعامل مع معدات ومواقع التصوير.
+
+اكتُشف أن وهبي سلطاني كان زميلاً لوالدة جيهان بن يوسف (مساعدة الإكسسوارات) في مصنع نسيج قديم منذ 20 عامًا.`},
+      {title:'3. مازن العلوي وإكرام (الممثل وزوجته)', body:`اكتشف المحققون أن مازن العلوي كان يعاني من ديون قمار كبيرة مؤخرًا. وقد أشار إلى سندة مرة بأنها "ورقة يانصيب" قد تنقذه.
+
+في اليوم الذي تلا الجريمة، قام مازن ببيع ساعته باهظة الثمن بسعر منخفض للغاية في سوق المستعمل.`},
+      {title:'4. المعهد (موقع الجريمة) وتفاصيل سندة', body:`كان هناك عامل صيانة جديد في المعهد يقوم بإصلاح نظام التدفئة المركزي في القاعة المجاورة للاجتماع. هذا العامل لم يُدون اسمه في سجلات الدخول والخروج.
+
+أشار فني الإضاءة إلى أن صندوق الكهرباء الرئيسي في موقع التصوير كان مفتوحًا وغريبًا. قد يكون هذا الصندوق نقطة جيدة لإخفاء شيء صغير أو استلامه.`},
+      {title:'5. تقرير الطقس وحالة المرور (6 أكتوبر 2025)', body:`1. الظروف الجوية في حمام الأنف (موقع الجريمة):
+
+الساعة 8:00 صباحًا - 10:00 صباحًا: كان الجو غائمًا جزئيًا، مع نسبة رطوبة عالية جدًا وصلت إلى 85%.
+
+الساعة 9:00 صباحًا (الوقت الحرج): بدأت أمطار خفيفة متقطعة في الهطول. كانت الأمطار خفيفة لدرجة أن طاقم التصوير لم يضطر لإيقاف العمل، لكنها كانت كافية لتجعل الأرضية المحيطة بالمعهد زلقة، خاصة على الأرصفة.
+
+الساعة 9:30 صباحًا وما بعدها: توقفت الأمطار تمامًا، وارتفعت درجة الحرارة بشكل مفاجئ، مما أدى إلى تبخر سريع للمياه من على الأسطح المعدنية والزجاجية.
+
+2. حالة المرور والطرق المؤدية إلى المعهد:
+
+صباح يوم الجريمة (قبل 9:00 صباحًا): شهدت الطريق الوطنية رقم 1 (RN1) المؤدية إلى حمام الأنف ازدحامًا مروريًا غير عادي نتيجة حادث سير بسيط لسيارة نقل بضائع.
+
+التأثير: هذا الازدحام تسبب في تأخير حوالي 20 دقيقة في المنطقة التي تفصل بين وسط المدينة والمعهد، واستمر حتى الساعة 9:45 صباحًا.`},
+      {title:'6. ردود الفعل العامة والإعلامية', body:`1. ضغط الإعلام العالمي:
+
+انتشر الخبر بسرعة البرق على وسائل الإعلام العالمية، ووصفت صحيفة فرنسية مرموقة الحادث بأنه "اغتيال على الهواء مباشرة".
+
+طالب الرأي العام في تونس والدول المجاورة بنتائج فورية وشفافة للتحقيق، مما وضع الحكومة ووزارة الداخلية تحت ضغط هائل.
+
+ركزت معظم التغطيات الإعلامية في البداية على المشتبه به الأول، الممثل مازن العلوي، بسبب وجوده المباشر في المشهد، وتجاهلت دور المساعدة جيهان وزوج الأم وهبي.
+
+2. حملات الدفاع عن المشتبه بهم:
+
+أطلق جمهور مازن العلوي حملة واسعة على وسائل التواصل الاجتماعي تحت وسم (هاشتاغ) "#مش_مازن"، مطالبين بإطلاق سراحه الفوري ومؤكدين براءته. أثارت هذه الحملات الكثير من الجدل.
+
+ظهرت إكرام، زوجة مازن، علناً في لقاء تلفزيوني وهي تبكي، مؤكدة ثقتها في براءة زوجها، واستدعت القناة محامي دفاع معروف للدفاع عن مازن.`}
+    ];
+
+    const pagesEl = document.getElementById('pages');
+    let current = 0;
+
+    function createPage(note,index){
+      const p=document.createElement('section');
+      p.className='page';
+      p.setAttribute('data-index',index);
+      p.innerHTML=`<div class="paper"><h2>${note.title}</h2><div class="note">${note.body.replace(/\n/g,'<br>')}</div></div>`;
+      return p;
+    }
+
+    function render(){
+      pagesEl.innerHTML='';
+      for(let i=0;i<sampleNotes.length;i++){
+        const page=createPage(sampleNotes[i],i);
+        if(i<current){page.classList.add('flip-left');}
+        else if(i===current){page.classList.add('current');}
+        else{page.classList.add('stack');page.style.zIndex=10+(sampleNotes.length-i);}
+        pagesEl.appendChild(page);
+      }
+    }
+
+    function goto(index){
+      if(index<0||index>=sampleNotes.length)return;
+      current=index;
+      const all=pagesEl.querySelectorAll('.page');
+      all.forEach((p,i)=>{
+        p.className='page';
+        if(i<current)p.classList.add('flip-left');
+        else if(i===current)p.classList.add('current');
+        else{p.classList.add('stack');p.style.zIndex=10+(sampleNotes.length-i);}
+      });
+    }
+
+    render();
+    goto(0);
+
+    document.getElementById('prev').addEventListener('click',()=>goto(current-1));
+    document.getElementById('next').addEventListener('click',()=>goto(current+1));
+
+    let startX=0,dragging=false,threshold=40,moved=false;
+    const notebook=document.getElementById('notebook');
+    notebook.addEventListener('pointerdown',e=>{dragging=true;moved=false;startX=e.clientX;notebook.setPointerCapture(e.pointerId);});
+    notebook.addEventListener('pointermove',e=>{
+      if(!dragging)return;
+      const dx=e.clientX-startX;
+      if(Math.abs(dx)>6)moved=true;
+      const top=pagesEl.querySelector('.page.current');
+      if(top&&moved){const pct=Math.max(-1,Math.min(1,dx/(notebook.clientWidth)));top.style.transform=`rotateY(${ -pct*25 }deg) translateX(${ pct*6 }%)`;top.style.boxShadow='0 24px 40px rgba(0,0,0,0.3)';}
+    });
+    notebook.addEventListener('pointerup',e=>{
+      if(!dragging)return;dragging=false;const dx=e.clientX-startX;const top=pagesEl.querySelector('.page.current');if(top)top.style.transform='';
+      if(!moved)return;if(dx<-threshold)goto(current+1);else if(dx>threshold)goto(current-1);moved=false;
+    });
+    window.addEventListener('keydown',e=>{if(e.key==='ArrowRight')goto(current+1);if(e.key==='ArrowLeft')goto(current-1);});
+  </script>
+</body>
+</html>
