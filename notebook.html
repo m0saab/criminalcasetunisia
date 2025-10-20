@@ -2,35 +2,189 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>Criminal Case Notebook</title>
   <style>
-    :root{--paper:#fff9c4;--note-bg:#fff59d;--ink:#222;--line:#e6d56b}
-    html,body{height:100%;margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;background:#f3e9c0}
-    .book-wrap{height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
-    .notebook{width:360px;max-width:92vw;height:600px;max-height:86vh;position:relative;perspective:1200px;
-      background:linear-gradient(180deg,rgba(0,0,0,0.06) 0%,rgba(255,255,255,0.02) 100%);
-      border-radius:10px;box-shadow:0 20px 50px rgba(0,0,0,0.25);overflow:visible;}
-    .spiral{position:absolute;left:-28px;top:28px;bottom:28px;width:56px;display:flex;flex-direction:column;align-items:center;justify-content:space-around;}
-    .spiral .ring{width:12px;height:14px;border-radius:8px;background:linear-gradient(180deg,#333,#666);box-shadow:inset 0 -2px 0 rgba(255,255,255,0.15)}
-    .pages{position:relative;overflow:hidden;height:100%;border-radius:8px}
-    .page{position:absolute;left:0;top:0;width:100%;height:100%;background:var(--paper);border-radius:8px;display:flex;flex-direction:column;transform-origin:left center;transition:transform 400ms cubic-bezier(.2,.9,.2,1), box-shadow 300ms;backface-visibility:hidden;}
-    .page .paper{flex:1;padding:28px 46px 28px 64px;background:
-      repeating-linear-gradient(to bottom, transparent 0 26px, var(--line) 26px, transparent 27px),
-      linear-gradient(90deg,#fff 0,#fff 100%);
-      color:var(--ink);position:relative;overflow:auto;border-radius:6px;font-family:'Caveat', cursive;font-size:18px;line-height:1.8}
-    .page h2{margin:8px 0 12px;font-size:20px;text-align:center;font-weight:bold}
-    .note{white-space:pre-wrap}
-    .page.stack{transform:translateX(10px) scale(.98)}
-    .page.current{z-index:50;box-shadow:0 30px 50px rgba(0,0,0,0.25)}
-    .page.flip-left{transform:rotateY(-160deg) translateX(-10%);box-shadow:0 20px 40px rgba(0,0,0,0.35)}
-    .page.flip-right{transform:rotateY(160deg) translateX(10%);box-shadow:0 20px 40px rgba(0,0,0,0.35)}
-    .controls{position:absolute;right:12px;bottom:12px;display:flex;gap:8px}
-    .btn{background:rgba(255,255,255,0.9);border-radius:8px;padding:8px 10px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 6px 14px rgba(0,0,0,0.08);cursor:pointer;font-weight:600}
-    .hint{position:absolute;left:18px;bottom:12px;font-size:13px;color:#6b5b2e;background:rgba(255,250,230,0.8);padding:6px 8px;border-radius:8px}
-    @media (max-width:420px){.notebook{height:86vh}}
-    .paper::-webkit-scrollbar{width:8px}
-    .paper::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.08);border-radius:8px}
+    :root {
+      --paper: #fff9c4;
+      --note-bg: #fff59d;
+      --ink: #222;
+      --line: #e6d56b;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #f3e9c0;
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      touch-action: pan-y;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .book-wrap {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .notebook {
+      width: 360px;
+      max-width: 92vw;
+      height: 600px;
+      max-height: 86vh;
+      position: relative;
+      perspective: 1200px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(255,255,255,0.02));
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+      overflow: visible;
+      user-select: none;
+    }
+
+    .spiral {
+      position: absolute;
+      left: -26px;
+      top: 28px;
+      bottom: 28px;
+      width: 52px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      pointer-events: none;
+    }
+
+    .spiral .ring {
+      width: 12px;
+      height: 14px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #333, #666);
+      box-shadow: inset 0 -2px 0 rgba(255,255,255,0.15);
+    }
+
+    .pages {
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      border-radius: 10px;
+    }
+
+    .page {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--paper);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      transform-origin: left center;
+      transition: transform 400ms cubic-bezier(.2,.9,.2,1), box-shadow 300ms;
+      backface-visibility: hidden;
+    }
+
+    .page .paper {
+      flex: 1;
+      padding: 24px 36px 24px 54px;
+      background:
+        repeating-linear-gradient(to bottom, transparent 0 26px, var(--line) 26px, transparent 27px),
+        linear-gradient(90deg, #fff 0, #fff 100%);
+      color: var(--ink);
+      overflow-y: auto;
+      border-radius: 8px;
+      font-family: 'Caveat', cursive;
+      font-size: 18px;
+      line-height: 1.8;
+      scroll-behavior: smooth;
+    }
+
+    .page h2 {
+      margin: 6px 0 12px;
+      font-size: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .note {
+      white-space: pre-wrap;
+    }
+
+    .page.stack {
+      transform: translateX(10px) scale(.98);
+    }
+
+    .page.current {
+      z-index: 50;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    }
+
+    .page.flip-left {
+      transform: rotateY(-160deg) translateX(-10%);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.35);
+    }
+
+    .page.flip-right {
+      transform: rotateY(160deg) translateX(10%);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.35);
+    }
+
+    .controls {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      display: flex;
+      gap: 8px;
+      z-index: 99;
+    }
+
+    .btn {
+      background: rgba(255,255,255,0.92);
+      border-radius: 10px;
+      padding: 10px 14px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      touch-action: manipulation;
+    }
+
+    .hint {
+      position: absolute;
+      left: 12px;
+      bottom: 10px;
+      font-size: 12px;
+      color: #6b5b2e;
+      background: rgba(255,250,230,0.8);
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+
+    .paper::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .paper::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.08);
+      border-radius: 8px;
+    }
+
+    @media (max-width: 420px) {
+      .notebook {
+        width: 90vw;
+        height: 80vh;
+      }
+      .page .paper {
+        padding: 20px 30px 20px 40px;
+        font-size: 16px;
+      }
+      .btn {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
 </head>
@@ -38,7 +192,8 @@
   <div class="book-wrap">
     <div class="notebook" id="notebook">
       <div class="spiral" aria-hidden="true">
-        <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
       </div>
       <div class="pages" id="pages"></div>
       <div class="controls">
@@ -100,20 +255,21 @@
     function createPage(note,index){
       const p=document.createElement('section');
       p.className='page';
-      p.setAttribute('data-index',index);
+      p.dataset.index=index;
       p.innerHTML=`<div class="paper"><h2>${note.title}</h2><div class="note">${note.body.replace(/\n/g,'<br>')}</div></div>`;
       return p;
     }
 
     function render(){
       pagesEl.innerHTML='';
-      for(let i=0;i<sampleNotes.length;i++){
-        const page=createPage(sampleNotes[i],i);
-        if(i<current){page.classList.add('flip-left');}
-        else if(i===current){page.classList.add('current');}
-        else{page.classList.add('stack');page.style.zIndex=10+(sampleNotes.length-i);}
+      sampleNotes.forEach((note,i)=>{
+        const page=createPage(note,i);
+        if(i<current) page.classList.add('flip-left');
+        else if(i===current) page.classList.add('current');
+        else page.classList.add('stack');
+        page.style.zIndex=10+(sampleNotes.length-i);
         pagesEl.appendChild(page);
-      }
+      });
     }
 
     function goto(index){
@@ -134,21 +290,42 @@
     document.getElementById('prev').addEventListener('click',()=>goto(current-1));
     document.getElementById('next').addEventListener('click',()=>goto(current+1));
 
-    let startX=0,dragging=false,threshold=40,moved=false;
+    // Swipe support for mobile
+    let startX=0,dragging=false,moved=false;
     const notebook=document.getElementById('notebook');
-    notebook.addEventListener('pointerdown',e=>{dragging=true;moved=false;startX=e.clientX;notebook.setPointerCapture(e.pointerId);});
-    notebook.addEventListener('pointermove',e=>{
-      if(!dragging)return;
-      const dx=e.clientX-startX;
-      if(Math.abs(dx)>6)moved=true;
+
+    notebook.addEventListener('touchstart',e=>{
+      if(e.touches.length>1)return;
+      startX=e.touches[0].clientX;
+      moved=false;
+    },{passive:true});
+
+    notebook.addEventListener('touchmove',e=>{
+      if(!startX)return;
+      const dx=e.touches[0].clientX-startX;
+      if(Math.abs(dx)>10)moved=true;
       const top=pagesEl.querySelector('.page.current');
-      if(top&&moved){const pct=Math.max(-1,Math.min(1,dx/(notebook.clientWidth)));top.style.transform=`rotateY(${ -pct*25 }deg) translateX(${ pct*6 }%)`;top.style.boxShadow='0 24px 40px rgba(0,0,0,0.3)';}
+      if(top && moved){
+        const pct=Math.max(-1,Math.min(1,dx/(notebook.clientWidth*0.8)));
+        top.style.transform=`rotateY(${ -pct*20 }deg) translateX(${ pct*4 }%)`;
+      }
+    },{passive:true});
+
+    notebook.addEventListener('touchend',e=>{
+      if(!moved)return;
+      const dx=e.changedTouches[0].clientX-startX;
+      const threshold=60;
+      const top=pagesEl.querySelector('.page.current');
+      if(top)top.style.transform='';
+      if(dx<-threshold)goto(current+1);
+      else if(dx>threshold)goto(current-1);
+      startX=0;moved=false;
     });
-    notebook.addEventListener('pointerup',e=>{
-      if(!dragging)return;dragging=false;const dx=e.clientX-startX;const top=pagesEl.querySelector('.page.current');if(top)top.style.transform='';
-      if(!moved)return;if(dx<-threshold)goto(current+1);else if(dx>threshold)goto(current-1);moved=false;
+
+    window.addEventListener('keydown',e=>{
+      if(e.key==='ArrowRight')goto(current+1);
+      if(e.key==='ArrowLeft')goto(current-1);
     });
-    window.addEventListener('keydown',e=>{if(e.key==='ArrowRight')goto(current+1);if(e.key==='ArrowLeft')goto(current-1);});
   </script>
 </body>
 </html>
