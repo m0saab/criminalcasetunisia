@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة نعم أو لا - تريفيا ركلات الترجيح</title>
+    <style>
+        /*
+        * CSS - تصميم أخضر بسيط (Green Minimal)
+        */
+        :root {
+            --primary-color: #4CAF50; /* أخضر أساسي */
+            --secondary-color: #81C784; /* أخضر فاتح */
+            --background-color: #f7f7f7;
+            --text-color: #333;
+            --light-text-color: #fff;
+            --correct-color: #4CAF50;
+            --incorrect-color: #F44336;
+            --hit-color: var(--primary-color);
+            --miss-color: #9E9E9E;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            direction: rtl;
+            text-align: right;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* تغيير إلى flex-start لتجنب الضغط */
+            min-height: 100vh;
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--light-text-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+        
+        /* شاشة إدخال الأسماء */
+        #name-input-screen {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        #name-input-screen input {
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            width: 80%;
+            border: 1px solid var(--secondary-color);
+            border-radius: 5px;
+            text-align: right;
+            font-size: 1em;
+        }
+
+        /* لوحة النتائج */
+        #scoreboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            gap: 20px;
+        }
+
+        .player-panel {
+            flex-basis: 50%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+
+        .player-panel.current-turn {
+            background-color: var(--primary-color);
+            color: var(--light-text-color);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .player-panel h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.3em;
+            text-align: center;
+        }
+        
+        /* عرض ركلات الترجيح */
+        .penalty-shots {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .shot-marker {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--miss-color); /* رمادي فاتح للغير مسجل */
+            border: 1px solid #ccc;
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+        
+        .shot-marker.hit {
+            background-color: var(--hit-color);
+            opacity: 1;
+        }
+
+        /* المؤشر والتعليمات */
+        #indicator {
+            text-align: center;
+            padding: 15px;
+            background-color: #e8f5e9; 
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        #indicator.sudden-death {
+            background-color: #ffee58; /* لون أصفر للتنبيه */
+            color: #333;
+        }
+
+
+        /* منطقة السؤال */
+        #question-area {
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            border: 1px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            font-size: 1.4em;
+            text-align: center;
+        }
+
+        /* أزرار الإجابة */
+        #answer-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .answer-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.1s;
+            font-weight: bold;
+        }
+
+        #btn-yes {
+            background-color: var(--correct-color);
+            color: var(--light-text-color);
+        }
+
+        #btn-no {
+            background-color: var(--incorrect-color);
+            color: var(--light-text-color);
+        }
+
+        .answer-btn:hover:not(:disabled) {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .answer-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* شاشة النتيجة النهائية */
+        #result-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 12px;
+            background-color: #e8f5e9;
+        }
+
+        #result-screen h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        #result-screen p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        #restart-btn, #start-game-btn {
+            background-color: var(--primary-color);
+            color: var(--light-text-color);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h1>⚽ تريفيا كرة القدم - نعم أم لا ⚽</h1>
+
+        <div id="name-input-screen">
+            <h2>أدخل أسماء اللاعبين</h2>
+            <label for="p1-name">اسم اللاعب 1:</label>
+            <input type="text" id="p1-name" value="اللاعب 1" maxlength="15">
+            
+            <label for="p2-name">اسم اللاعب 2:</label>
+            <input type="text" id="p2-name" value="اللاعب 2" maxlength="15">
+            
+            <button id="start-game-btn" onclick="initializeGame()">ابدأ ركلات الترجيح</button>
+        </div>
+
+
+        <div id="game-content" style="display: none;">
+            <div id="scoreboard">
+                <div id="player1-panel" class="player-panel">
+                    <h2 id="p1-name-display">اللاعب 1</h2>
+                    <div class="penalty-shots" id="p1-shots">
+                        </div>
+                </div>
+                <div id="player2-panel" class="player-panel">
+                    <h2 id="p2-name-display">اللاعب 2</h2>
+                    <div class="penalty-shots" id="p2-shots">
+                        </div>
+                </div>
+            </div>
+
+            <div id="indicator"></div>
+
+            <div id="question-area"></div>
+
+            <div id="answer-buttons">
+                <button id="btn-yes" class="answer-btn">نعم</button>
+                <button id="btn-no" class="answer-btn">لا</button>
+            </div>
+        </div>
+
+        <div id="result-screen">
+            <h2 id="result-text"></h2>
+            <p id="final-score"></p>
+            <button id="restart-btn" onclick="location.reload()">إعادة اللعب والأسماء</button>
+        </div>
+    </div>
+
+    <script>
+        // قائمة الأسئلة (نعم: true, لا: false)
+        const questions = [
+            { q: "كريستيانو رونالدو سجل أول هدف له في دوري أبطال أوروبا بعد 27 مباراة.", a: true },
+            { q: "ليونيل ميسي بدأ مسيرته الاحترافية في صفوف نادي برشلونة قبل أن يلعب لأي فريق آخر.", a: true },
+            { q: "فرانشيسكو توتي لعب طوال مسيرته الاحترافية مع نادي روما فقط ولم ينتقل لأي نادٍ آخر.", a: true },
+            { q: "باولو مالديني فاز بكأس العالم مع منتخب إيطاليا خلال مسيرته.", a: false },
+            { q: "يوفنتوس هو النادي الوحيد الذي فاز بالدوري الإيطالي في كل موسم منذ تأسيسه.", a: false },
+            { q: "بيليه هو اللاعب الوحيد الذي فاز بكأس العالم ثلاث مرات مع البرازيل.", a: true },
+            { q: "زين الدين زيدان سجل هدف الفوز في نهائي كأس العالم 1998 ضد البرازيل.", a: true },
+            { q: "نيمار لعب مع ريال مدريد قبل الانتقال إلى باريس سان جيرمان.", a: false },
+            { q: "روي كوستا هو اللاعب الوحيد الذي فاز بدوري أبطال أوروبا مع ميلان بعد فوزه سابقاً بالدوري الأوروبي مع فيورنتينا.", a: false },
+            { q: "تيري هنري سجل هدفه الأول مع أرسنال في أول مباراة رسمية له بالدوري الإنجليزي.", a: false },
+            { q: "فرانك لامبارد هو أفضل هداف في تاريخ تشيلسي رغم كونه لاعب وسط.", a: true },
+            { q: "زلاتان إبراهيموفيتش لعب مع كل من مانشستر يونايتد ومانشستر سيتي.", a: false },
+            { q: "ديفيد بيكهام سجل هدفاً مباشراً من ركلة ركنية في دوري أبطال أوروبا.", a: true },
+            { q: "يان أوبلاك لم يتلق أي هدف في أكثر من 20 مباراة متتالية مع أتلتيكو مدريد.", a: false },
+            { q: "لويس سواريز لم يسبق له اللعب في الدوري الإيطالي.", a: true },
+            { q: "أندريس إنييستا سجل هدفه الأول مع برشلونة في نهائي دوري أبطال أوروبا.", a: false },
+            { q: "كيني دالغليش فاز بدوري أبطال أوروبا كلاعب ومدرب مع ليفربول.", a: true },
+            { q: "دييغو مارادونا لم يشارك في أي نهائي دوري أبطال أوروبا.", a: true },
+            { q: "فرانشيسكو توتي سجل هدفه الأخير مع روما في الدوري الإيطالي عام 2017.", a: true },
+            { q: "رونالدو الظاهرة (البرازيلي) فاز بجائزة الكرة الذهبية ثلاث مرات.", a: true },
+            { q: "تييري هنري أصبح الهداف التاريخي لأرسنال قبل انتقاله إلى برشلونة.", a: true },
+            { q: "داني ألفيس هو أكثر لاعب فوزاً بالألقاب في تاريخ كرة القدم.", a: true },
+            { q: "ليونيل ميسي لعب مع منتخب الأرجنتين في أولمبياد لندن 2012 وسجل جميع أهدافه هناك.", a: false },
+            { q: "كريستيانو رونالدو سجل هدفه الأول مع مانشستر يونايتد في دوري أبطال أوروبا قبل تسجيله أي هدف في الدوري الإنجليزي.", a: true },
+            { q: "باولو مالديني لعب مع ميلان في جميع المراكز الدفاعية الممكنة ما عدا كحارس مرمى.", a: true },
+            { q: "زلاتان إبراهيموفيتش سجل أكثر من 500 هدف في مسيرته مع الأندية والمنتخب.", a: true },
+            { q: "بيليه فاز بكأس العالم مع البرازيل في 1958 و1962 و1970.", a: true },
+            { q: "كريستيانو رونالدو هو أول لاعب يسجل أكثر من 100 هدف في دوري أبطال أوروبا.", a: true },
+            { q: "دييغو مارادونا لم يسجل أي هدف في كأس العالم 1986 ضد ألمانيا في النهائي.", a: true },
+            { q: "ليونيل ميسي سجل هدفه الأول مع برشلونة في مباراة ضد أتلتيكو مدريد.", a: false },
+            { q: "تيري هنري أصبح هداف الدوري الإنجليزي مع أرسنال في موسم 2003–2004 بدون أي مباراة خسارة.", a: true },
+            { q: "ديفيد بيكهام سجل هدفاً مباشراً من ضربة ركنية ضد يونغ بويز في دوري أبطال أوروبا.", a: true },
+            { q: "أندريس إنييستا لم يسجل أي هدف في كأس العالم 2014.", a: true },
+            { q: "رونالدو البرازيلي لعب مع ريال مدريد قبل مانشستر يونايتد.", a: false },
+            { q: "كريستيانو رونالدو هو الهداف التاريخي لمنتخب البرتغال قبل ليونيل ميسي.", a: true },
+            { q: "ليفربول فاز بدوري أبطال أوروبا قبل أن يفوز بالدوري الإنجليزي الممتاز بعد غياب 30 عامًا.", a: true },
+            { q: "رونالدو الظاهرة فاز بجائزة الكرة الذهبية بعد انتقاله إلى ريال مدريد مباشرة.", a: false },
+            { q: "بايرن ميونيخ هو النادي الوحيد الذي فاز بالثلاثية (الدوري والكأس ودوري الأبطال) أكثر من مرة.", a: true },
+            { q: "البرازيل فازت بكأس العالم 5 مرات قبل 2025.", a: true },
+            { q: "ألمانيا الغربية فازت بكأس العالم 1974 على أرضها.", a: true },
+            { q: "لويس سواريز طرد من مباريات كأس العالم أكثر من مرة.", a: true },
+            { q: "ماركو فان باستن سجل هدفه الشهير في نهائي كأس العالم 1988.", a: false },
+            { q: "أندريس إنييستا سجل هدف الفوز في نهائي كأس العالم 2010 ضد هولندا.", a: true },
+            { q: "الأرجنتين خسرت نهائي كأس العالم 1990 أمام ألمانيا الغربية.", a: true },
+            { q: "كافو البرازيلي هو اللاعب الوحيد الذي شارك في 4 نهائيات لكأس العالم.", a: false },
+            { q: "زين الدين زيدان سجل هدفين في نهائي كأس العالم 1998 ضد البرازيل.", a: true },
+            { q: "روماريو البرازيلي فاز بالحذاء الذهبي في كأس العالم 1994.", a: true },
+            { q: "أوسكار كاميرون هو اللاعب الوحيد الذي سجل هدف في كل نسخة شارك فيها في كأس العالم.", a: false },
+            { q: "ميروسلاف كلوزه هو الهداف التاريخي لكأس العالم.", a: true },
+            { q: "النرويج لم تتأهل لكأس العالم 1994 رغم تصدرها مجموعتها الأوروبية.", a: true },
+            { q: "بيليه فاز بكأس العالم 1958 و1962 و1970 وسجل هدفًا في كل نهائي.", a: false },
+            { q: "كريستيانو رونالدو سجل هدفه الأول في كأس العالم 2006 ضد إيران.", a: true },
+            { q: "ميسي لم يسجل أي هدف في كأس العالم 2006 رغم مشاركته.", a: false },
+            { q: "البرازيل لم تخسر أي مباراة في كأس العالم 2002 حتى النهائي.", a: true },
+            { q: "دييغو مارادونا سجل 5 أهداف في كأس العالم 1986.", a: true },
+            { q: "ألمانيا فازت بكأس العالم 2014 بعد التغلب على الأرجنتين بهدف ماريو غوتزه في الوقت الإضافي.", a: true },
+            { q: "رونالدو البرازيلي سجل هدفين في نهائي كأس العالم 2002.", a: true },
+            { q: "فرنسا خسرت نهائي كأس العالم 2006 ضد إيطاليا بعد ركلات الترجيح.", a: true },
+            { q: "بيليه سجل هدفًا في كل مباراة لعبها في كأس العالم 1958.", a: false },
+            { q: "كافو هو اللاعب الوحيد الذي شارك في 4 نهائيات لكأس العالم وفاز بها كلها.", a: false },
+            { q: "لويس سواريز طرد مرتين في مباريات كأس العالم 2010 و2014.", a: true },
+            { q: "إنجلترا فازت بكأس العالم مرة واحدة فقط في 1966 على أرضها.", a: true },
+            { q: "ميشيل بلاتيني لم يشارك أبدًا في أي نسخة من كأس العالم.", a: false },
+            { q: "هاتريك غاريث بيل في تصفيات كأس العالم 2018 لم يكن في البطولة نفسها.", a: true },
+            { q: "لويس سواريز تسبب في طرد لاعب إيطالي في كأس العالم 2010 بعد حادثة العض.", a: true },
+            { q: "ريفالدو البرازيلي سجل هدف الفوز في نهائي كأس العالم 2002.", a: false },
+            { q: "روماريو فاز بالحذاء الذهبي في كأس العالم 1994.", a: true },
+            { q: "ميروسلاف كلوزه هو الهداف التاريخي لكأس العالم برصيد 16 هدفًا.", a: true },
+            { q: "الأرجنتين خسرت نهائي كأس العالم 1990 أمام ألمانيا الغربية بهدف نظيف.", a: true },
+            { q: "بيليه هو أصغر لاعب يسجل في نهائي كأس العالم بعمر 17 عامًا.", a: true },
+            { q: "زين الدين زيدان سجل هدفين برأسه في نهائي كأس العالم 1998 ضد البرازيل.", a: true },
+            { q: "فرنسا فازت بكأس العالم 2018 بعد الفوز على كرواتيا 4-2 في النهائي.", a: true },
+            { q: "سيرخيو أجويرو هو أول لاعب غير بريطاني يسجل 200 هدف في الدوري الإنجليزي.", a: false },
+            { q: "ليستر سيتي فاز بالدوري الإنجليزي الممتاز موسم 2015–2016 بعد أن كان مهددًا بالهبوط.", a: true },
+            { q: "أرسنال فاز بالدوري الممتاز موسم 2003–2004 بدون أي خسارة.", a: true },
+            { q: "مانشستر يونايتد فاز بالدوري الإنجليزي الممتاز 13 مرة خلال عقد واحد فقط.", a: false },
+            { q: "ديفيد بيكهام سجل أكثر من 50 هدفًا في الدوري الإنجليزي مع مانشستر يونايتد.", a: false },
+            { q: "يان فان بيرسي سجل هدف الفوز لمانشستر يونايتد في آخر جولة من الدوري الممتاز موسم 2012–2013.", a: false },
+            { q: "بيير إيميريك أوباميانغ هو الهداف التاريخي لأرسنال في الدوري الإنجليزي.", a: false },
+            { q: "محمد صلاح سجل أكثر من 30 هدفًا في موسم واحد من الدوري الإنجليزي الممتاز قبل 2025.", a: true },
+            { q: "ستيفن جيرارد لم يفز بالدوري الإنجليزي الممتاز مع ليفربول طوال مسيرته.", a: true },
+            { q: "فرنانديز لاعب مانشستر يونايتد سجل أول هدف له بالدوري الإنجليزي في أول مباراة رسمية له.", a: false },
+            { q: "ريان غيغز هو أكثر لاعب مشاركة في تاريخ الدوري الإنجليزي الممتاز.", a: true },
+            { q: "سيرخيو أجويرو سجل هدفه الشهير في الدقيقة 94 ليمنح مانشستر سيتي لقب الدوري موسم 2011–2012.", a: true },
+            { q: "واين روني هو الهداف التاريخي لمانشستر يونايتد في الدوري الإنجليزي.", a: true },
+            { q: "نيمانيا ماتيتش فاز بالدوري الإنجليزي مع كل من تشيلسي ومانشستر يونايتد.", a: true },
+            { q: "يورغن كلوب لم يفز بالدوري الإنجليزي الممتاز مع ليفربول قبل موسم 2019–2020.", a: true },
+            { q: "بيب غوارديولا فاز بالدوري الإنجليزي الممتاز مع مانشستر سيتي في موسمه الأول فقط.", a: false },
+            { q: "مانشستر سيتي هو النادي الذي سجل أكبر عدد من الأهداف في موسم واحد بالدوري الممتاز قبل 2025.", a: true },
+            { q: "واين روني سجل هدفه الأول مع مانشستر يونايتد في الدوري الإنجليزي ضد أستون فيلا.", a: true },
+            { q: "روبن فان بيرسي سجل هاتريك في أول مباراة له بالدوري الإنجليزي الممتاز.", a: false },
+            { q: "مانشستر يونايتد فاز بالدوري الإنجليزي الممتاز بعد رحيل فيرجسون مباشرةً.", a: false },
+            { q: "ليفربول فاز بالدوري الممتاز بعد غياب دام 30 عامًا في موسم 2019–2020.", a: true },
+            { q: "بيكهام سجل هدفًا مباشرًا من ركلة ركنية في الدوري الإنجليزي الممتاز.", a: true },
+            { q: "كريستيانو رونالدو سجل أكثر من 450 هدفًا في الدوري الإسباني مع ريال مدريد.", a: true },
+            { q: "أتلتيكو مدريد لم يفز بالدوري الإسباني منذ تأسيسه حتى 2020.", a: false },
+            { q: "أندريس إنييستا سجل أول هدف له في الدوري الإسباني ضد ريال مدريد.", a: false },
+            { q: "راؤول غونزاليس هو الهداف التاريخي لريال مدريد في الدوري الإسباني قبل رحيله.", a: true },
+            { q: "أرسنال فاز بالدوري الإسباني قبل أن يفوز بالدوري الإنجليزي.", a: false },
+            { q: "زين الدين زيدان سجل هدف الفوز لريال مدريد في نهائي الدوري الإسباني 2003–2004.", a: false },
+            { q: "لويس سواريز سجل أكثر من 20 هدفًا في موسم واحد مع برشلونة قبل 2025.", a: true },
+            { q: "بيكيه فاز بالدوري الإسباني مع برشلونة أكثر من خمس مرات قبل 2025.", a: true },
+            { q: "راؤول غونزاليس لعب طوال مسيرته مع ريال مدريد فقط في الدوري الإسباني.", a: false },
+            { q: "سيرجيو راموس فاز بالدوري الإسباني مع ريال مدريد أكثر من 5 مرات قبل رحيله.", a: true },
+            { q: "كريستيانو رونالدو لم يخسر أي مباراة ضد برشلونة في الدوري الإسباني.", a: false },
+            { q: "روبرتو مانشيني فاز بالدوري الإيطالي كلاعب مع إنتر ميلان فقط.", a: false },
+            { q: "دييغو مارادونا فاز بالدوري الإيطالي مع نابولي مرتين فقط.", a: true },
+            { q: "أليساندرو دل بييرو سجل هدفه الأول مع يوفنتوس في أول مباراة له بالدوري الإيطالي.", a: false },
+            { q: "فرانشيسكو توتي لم يفز بالدوري الإيطالي أبداً مع روما.", a: false },
+            { q: "زلاتان إبراهيموفيتش سجل أكثر من 50 هدفًا في الدوري الإيطالي مع ميلان وإنتر ويوفنتوس.", a: true },
+            { q: "إنتر ميلان فاز بالدوري الإيطالي موسم 2006–2007 بعد أحداث الكالتشوبولي.", a: true },
+            { q: "كريستيانو رونالدو هو أول لاعب يسجل هاتريك ضد ميلان في الدوري الإيطالي.", a: false },
+            { q: "باولو مالديني لم يسجل أي هدف في أول 10 مواسم له بالدوري الإيطالي.", a: false },
+            { q: "يوفنتوس هو النادي الأكثر فوزًا بالدوري الإيطالي.", a: true },
+            { q: "لوكا توني سجل أكثر من 20 هدفًا في موسم واحد مع فيورنتينا.", a: true },
+            { q: "يوفنتوس فاز بالدوري الإيطالي 9 مرات متتالية خلال العقد 2010s.", a: true },
+            { q: "باولو مالديني لم يسجل أي هدف في أول 10 مواسم له بالدوري الإيطالي.", a: false },
+            { q: "إنتر ميلان فاز بالدوري الإيطالي موسم 2006–2007 بعد فضيحة الكالتشوبولي.", a: true },
+            { q: "روبيرتو باجيو لم يفز بالدوري الإيطالي مع ميلان.", a: true },
+            { q: "كريستيانو رونالدو سجل أول هدف له مع يوفنتوس ضد كالياري.", a: true },
+            { q: "ماريانو دياس لعب في الدوري الإيطالي مع روما فقط.", a: false },
+            { q: "أليساندرو دل بييرو هو الهداف التاريخي ليوفنتوس في الدوري الإيطالي.", a: true },
+            { q: "روميلو لوكاكو فاز بالدوري الإيطالي مع إنتر ميلان قبل انتقاله إلى الدوري الإنجليزي.", a: true },
+            { q: "كريستيانو رونالدو لم يفز بالدوري الإيطالي في موسمه الأول مع يوفنتوس.", a: true },
+            { q: "زلاتان إبراهيموفيتش سجل أكثر من 50 هدفًا في الدوري الإيطالي مع ميلان وإنتر.", a: true },
+            { q: "باولو ديبالا سجل هاتريك أول له في الدوري الإيطالي ضد سامبدوريا.", a: true },
+            { q: "فرانشيسكو توتي لم يفز بالدوري الإيطالي أبداً مع روما.", a: false },
+            { q: "يوفنتوس هو النادي الأكثر فوزًا بالدوري الإيطالي في العقد 2010s.", a: true },
+            { q: "إنتر ميلان فاز بالدوري الإيطالي موسم 2020–2021 بعد غياب 11 عامًا عن اللقب.", a: true },
+            { q: "لويس سواريز لم يلعب أبدًا في الدوري الإيطالي.", a: true },
+            { q: "كريستيانو رونالدو سجل في جميع المباريات ضد نابولي مع يوفنتوس في الدوري الإيطالي.", a: false },
+            { q: "بروسيا دورتموند فاز بالدوري الألماني موسم 2010–2011 تحت قيادة يورغن كلوب.", a: true },
+            { q: "فرانك ريبيري لعب طوال مسيرته مع بايرن ميونيخ فقط في البوندسليغا.", a: false },
+            { q: "أوليفر كان فاز بالدوري الألماني كلاعب مع بايرن ميونيخ بعد أن انتقل من هيرتا برلين.", a: true },
+            { q: "لوكاس بودولسكي فاز بالدوري الألماني مع كولن فقط.", a: false },
+            { q: "لوكاس بودولسكي لم يسجل أي هدف في الدوري الألماني مع بايرن ميونيخ.", a: false },
+            { q: "بايرن ميونيخ هو النادي الأكثر فوزًا بالدوري الألماني.", a: true },
+            { q: "روبرت ليفاندوفسكي سجل أول هاتريك له في الدوري الألماني ضد فولفسبورغ.", a: true },
+            { q: "بايرن ميونيخ فاز بالدوري الألماني موسم 2019–2020 بعد أن سجل أكثر من 100 هدف في الموسم.", a: true },
+            { q: "لوكاس بودولسكي فاز بالدوري الألماني مع كولن.", a: false },
+            { q: "يورغن كلوب لم يفز بالدوري الألماني كلاعب.", a: true },
+            { q: "بايرن ميونيخ هو النادي الأكثر فوزًا بالدوري الألماني منذ تأسيس البوندسليغا.", a: true },
+            { q: "ماريو غوميز سجل أكثر من 20 هدفًا في موسم واحد للبوندسليغا عدة مرات.", a: true },
+            { q: "بايرن ميونيخ فاز بالدوري الألماني موسم 2010–2011 تحت قيادة جوارديولا.", a: false },
+            { q: "روبرت ليفاندوفسكي لم يسجل أي هدف في أول موسم له مع بايرن ميونيخ.", a: false },
+            { q: "توماس مولر سجل أكثر من 15 هدفًا في موسم واحد للبوندسليغا عدة مرات.", a: true },
+            { q: "بروسيا دورتموند لم يفز بالدوري الألماني منذ موسم 2011–2012.", a: true },
+            { q: "فرانك ريبيري فاز بالدوري الألماني مع بايرن ميونيخ أكثر من 7 مرات.", a: true },
+            { q: "أوليفر كان لم يفز بالدوري الألماني مع بايرن ميونيخ أكثر من 5 مرات.", a: false },
+            { q: "الجزائر فازت بكأس الأمم الإفريقية 2019 على أرضها.", a: false },
+            { q: "مصر فازت بثلاث بطولات متتالية بين 2006 و2010.", a: true },
+            { q: "مدرب مصر الأسبق حسن شحاتة فاز بكأس الأمم الإفريقية ثلاث مرات متتالية.", a: true },
+            { q: "السنغال لم يصل إلى نهائي كأس الأمم الإفريقية قبل 2002.", a: false },
+            { q: "ساحل العاج فازت بكأس الأمم الإفريقية 2015 بعد ركلات الترجيح ضد غانا.", a: true },
+            { q: "مصر فازت بكأس الأمم الإفريقية موسم 2010 على أرضها.", a: false },
+            { q: "زامبيا فازت بكأس الأمم الإفريقية لأول مرة في تاريخها عام 2012.", a: true },
+            { q: "باريس سان جيرمان فاز بالدوري الفرنسي لأول مرة في موسم 2012–2013.", a: true },
+            { q: "ليون لم يفز بالدوري الفرنسي منذ موسم 2007–2008.", a: true },
+            { q: "كيليان مبابي سجل أكثر من 30 هدفًا في موسم واحد بالدوري الفرنسي.", a: true },
+            { q: "مارادونا لم يلعب أبدًا في الدوري الفرنسي.", a: true },
+            { q: "باريس سان جيرمان فاز بالدوري الفرنسي 10 مرات متتالية.", a: false },
+            { q: "أولمبيك مارسيليا فاز بالدوري الفرنسي موسم 2009–2010.", a: false },
+            { q: "تييري هنري لعب مع موناكو قبل انتقاله إلى أرسنال في الدوري الإنجليزي.", a: true },
+            { q: "ليون فاز بالدوري الفرنسي سبع مرات متتالية بين 2002 و2008.", a: true },
+            { q: "نيمار جونيور فاز بالدوري الفرنسي مع باريس سان جيرمان في موسمه الأول 2017–2018.", a: true },
+            { q: "مونبلييه فاز بالدوري الفرنسي موسم 2011–2012.", a: true },
+            { q: "تياغو سيلفا فاز بالدوري الفرنسي مع باريس سان جيرمان أكثر من خمس مرات.", a: true },
+            { q: "موناكو لم يصل إلى نهائي دوري أبطال أوروبا أبداً.", a: false },
+            { q: "باريس سان جيرمان فاز بالدوري الفرنسي موسم 2013–2014 تحت قيادة لوران بلان.", a: true },
+            { q: "إيدن هازارد فاز بالدوري الإنجليزي مع تشيلسي موسم 2014–2015.", a: true },
+            { q: "تشيلسي فاز بالدوري الإنجليزي 5 مرات متتالية بين 2005 و2010.", a: false },
+            { q: "ميشيل باتشيني مدرب تشيلسي في موسم 2011–2012.", a: false },
+            { q: "تشيلسي فاز بكأس العالم للأندية لأول مرة عام 2021.", a: true },
+            { q: "ديكو لعب مع تشيلسي بعد انتقاله من برشلونة.", a: false },
+            { q: "باتريك فييرا لعب مع أرسنال قبل انتقاله إلى يوفنتوس.", a: true },
+            { q: "بيتر تشيك لم يلعب مع أرسنال بعد انتقاله من تشيلسي.", a: false },
+            { q: "أرسنال فاز بكأس الاتحاد الإنجليزي 14 مرة في تاريخه.", a: true },
+            { q: "ميكيل أرتيتا لعب مع أرسنال كلاعب قبل أن يصبح مدربه.", a: true },
+            { q: "أرسنال فاز بالدوري الإنجليزي 9 مرات متتالية بين 1998 و2007.", a: false },
+            { q: "توتنهام هوتسبر فاز بالدوري الإنجليزي مرتين فقط في تاريخه.", a: true },
+            { q: "السير أليكس فيرجسون قاد مانشستر يونايتد للفوز بالدوري الإنجليزي 13 مرة.", a: true },
+            { q: "مانشستر يونايتد فاز بكأس الاتحاد الإنجليزي موسم 2015–2016.", a: false },
+            { q: "كيفين دي بروين انضم لمانشستر سيتي قادمًا من فولفسبورغ.", a: true },
+            { q: "مانشستر سيتي فاز بدوري أبطال أوروبا قبل 2023.", a: false },
+            { q: "بيب غوارديولا قاد مانشستر سيتي للفوز بالدوري الإنجليزي لأول مرة موسم 2017–2018.", a: true },
+            { q: "مانشستر سيتي لم يخسر أي مباراة في الدوري الإنجليزي موسم 2017–2018.", a: false },
+            { q: "بول سكولز لم يلعب مع مانشستر يونايتد بعد عام 2015.", a: true },
+            { q: "هاري كين هو الهداف التاريخي لتوتنهام في الدوري الإنجليزي.", a: true },
+            { q: "توتنهام هوتسبر فاز بالدوري الإنجليزي موسم 1960–1961.", a: true },
+            { q: "غاريث بيل بدأ مسيرته الاحترافية مع توتنهام قبل الانتقال إلى ريال مدريد.", a: true },
+            { q: "توتنهام فاز بدوري أبطال أوروبا مرة واحدة في تاريخه.", a: false },
+            { q: "نيكولاس أنيلكا لعب مع أرسنال في العقد 2000s.", a: true },
+            { q: "أرسنال فاز بكأس الرابطة الإنجليزية لأول مرة عام 1987.", a: true },
+            { q: "أرسنال لم يصل إلى نهائي دوري أبطال أوروبا أبداً.", a: false },
+            { q: "بايرن ميونيخ هو النادي الأكثر فوزًا بالدوري الألماني منذ تأسيس البوندسليغا.", a: true },
+            { q: "أرسنال هو النادي الوحيد الذي فاز بالدوري الإنجليزي دون أن يخسر أي مباراة في العصر الحديث.", a: true },
+            { q: "أرسنال فاز بكأس الاتحاد الإنجليزي موسم 2019–2020 تحت قيادة ميكيل أرتيتا.", a: true },
+            { q: "جيروم بواتينغ لعب مع بايرن ميونيخ طوال مسيرته الاحترافية.", a: false },
+            { q: "ريو فيرديناند لعب مع مانشستر سيتي قبل الانتقال إلى مانشستر يونايتد.", a: false },
+            { q: "مانشستر سيتي فاز بكأس الاتحاد الإنجليزي أكثر من خمس مرات.", a: true },
+            { q: "كريستيانو رونالدو هو الهداف التاريخي لبطولة أمم أوروبا.", a: true },
+            { q: "فرنسا فازت ببطولة أمم أوروبا عام 2000 بعد الفوز على إيطاليا بركلات الترجيح.", a: false },
+            { q: "المنتخب الألماني لم يفز ببطولة أمم أوروبا منذ 1996.", a: false },
+            { q: "منتخب إيطاليا فاز ببطولة أمم أوروبا آخر مرة قبل 2020.", a: true },
+            { q: "ميشيل بلاتيني سجل أكثر من 9 أهداف في تاريخ بطولة أمم أوروبا.", a: true },
+            { q: "منتخب البرتغال فاز ببطولة أمم أوروبا لأول مرة عام 2016.", a: true },
+            { q: "فرنسا فازت ببطولة أمم أوروبا عام 1984 على أرضها.", a: true },
+            { q: "تشيلي فازت بكوبا أمريكا مرتين متتاليتين عامي 2015 و2016.", a: true },
+            { q: "باولو ديبالا فاز بكوبا أمريكا مع الأرجنتين قبل 2020.", a: false },
+            { q: "منتخب كولومبيا فاز بكوبا أمريكا مرة واحدة فقط في تاريخه.", a: true },
+            { q: "أوروغواي فازت بكوبا أمريكا عام 2011 بعد التغلب على باراغواي بركلات الترجيح.", a: false },
+            { q: "ليونيل ميسي سجل هدف الفوز في نهائي كوبا أمريكا 2021.", a: false },
+            { q: "كوبا أمريكا 2020 أقيمت في البرازيل.", a: false },
+            { q: "أوروجواي فازت بأول نسخة من كوبا أمريكا عام 1916.", a: true },
+            { q: "كوبا أمريكا هي أقدم بطولة قارية في كرة القدم.", a: true },
+            { q: "ليونيل ميسي سجل أكثر من 25 هدفًا ضد ريال مدريد في جميع البطولات.", a: true },
+            { q: "كريستيانو رونالدو سجل أول هدف له ضد برشلونة في الكلاسيكو موسم 2009–2010.", a: false },
+            { q: "ريال مدريد لم يخسر أي مباراة كلاسيكو في موسم 2011–2012.", a: false },
+            { q: "لويس فيغو سجل أهدافًا مع برشلونة ضد ريال مدريد قبل انتقاله للملكي.", a: true },
+            { q: "مانشستر يونايتد فاز بدوري أبطال أوروبا موسم 2007–2008 بعد الفوز على تشيلسي.", a: true },
+            { q: "رونالدو لم يسجل أي هدف في نهائي دوري أبطال أوروبا 2014.", a: false },
+            { q: "بايرن ميونيخ لم يخسر أي مباراة في دوري أبطال أوروبا موسم 2019–2020.", a: true },
+            { q: "نيمار جونيور سجل أكثر من 10 أهداف في دوري أبطال أوروبا مع برشلونة في موسم واحد.", a: true },
+            { q: "يوفنتوس فاز بدوري أبطال أوروبا موسم 1995–1996 بعد الفوز على أياكس.", a: true },
+            { q: "باريس سان جيرمان لم يصل إلى نهائي دوري أبطال أوروبا قبل 2020.", a: true },
+            { q: "بايرن ميونيخ فاز بدوري أبطال أوروبا موسم 2000–2001 بعد الفوز على فالنسيا بركلات الترجيح.", a: true },
+            { q: "المغرب وصل إلى نصف النهائي في كأس العالم 2022.", a: true },
+            { q: "كريستيانو رونالدو لم يسجل أي هدف في كأس العالم 2022.", a: false },
+            { q: "البرازيل لم تصل إلى نصف النهائي في كأس العالم 2022.", a: true }
+        ];
+
+        let scores = { p1: 0, p2: 0 };
+        let playerNames = { p1: 'اللاعب 1', p2: 'اللاعب 2' };
+        let shots = { p1: [], p2: [] }; // لتخزين نتائج التسديدات (Hit/Miss)
+        let currentPlayer = 1;
+        let currentShot = 0;
+        let isSuddenDeath = false;
+        let questionIndices = [];
+        let currentQuestionIndex = -1;
+        
+        const maxInitialShots = 10; // 5 shots per player
+
+        const elements = {
+            nameScreen: document.getElementById('name-input-screen'),
+            gameContent: document.getElementById('game-content'),
+            p1NameInput: document.getElementById('p1-name'),
+            p2NameInput: document.getElementById('p2-name'),
+            p1NameDisplay: document.getElementById('p1-name-display'),
+            p2NameDisplay: document.getElementById('p2-name-display'),
+            p1ShotsContainer: document.getElementById('p1-shots'),
+            p2ShotsContainer: document.getElementById('p2-shots'),
+            p1Panel: document.getElementById('player1-panel'),
+            p2Panel: document.getElementById('player2-panel'),
+            questionArea: document.getElementById('question-area'),
+            indicator: document.getElementById('indicator'),
+            resultScreen: document.getElementById('result-screen'),
+            resultText: document.getElementById('result-text'),
+            finalScore: document.getElementById('final-score'),
+            btnYes: document.getElementById('btn-yes'),
+            btnNo: document.getElementById('btn-no'),
+        };
+
+        // دالة لتبديل ترتيب الأسئلة عشوائياً
+        function shuffleQuestions() {
+            questionIndices = Array.from({ length: questions.length }, (_, i) => i);
+            for (let i = questionIndices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questionIndices[i], questionIndices[j]] = [questionIndices[j], questionIndices[i]];
+            }
+        }
+
+        // دالة تهيئة اللعبة بعد إدخال الأسماء
+        function initializeGame() {
+            playerNames.p1 = elements.p1NameInput.value || 'اللاعب 1';
+            playerNames.p2 = elements.p2NameInput.value || 'اللاعب 2';
+            
+            elements.p1NameDisplay.textContent = playerNames.p1;
+            elements.p2NameDisplay.textContent = playerNames.p2;
+
+            elements.nameScreen.style.display = 'none';
+            elements.gameContent.style.display = 'block';
+
+            startGame();
+        }
+
+        function startGame() {
+            scores = { p1: 0, p2: 0 };
+            shots = { p1: [], p2: [] };
+            currentPlayer = 1;
+            currentShot = 0;
+            isSuddenDeath = false;
+            currentQuestionIndex = -1;
+            
+            shuffleQuestions();
+            elements.resultScreen.style.display = 'none';
+            
+            initializeShotMarkers();
+            nextShot();
+        }
+
+        // إنشاء وعرض مؤشرات الركلات (الدوائر)
+        function initializeShotMarkers() {
+            elements.p1ShotsContainer.innerHTML = '';
+            elements.p2ShotsContainer.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                elements.p1ShotsContainer.innerHTML += `<div class="shot-marker" data-shot="${i}"></div>`;
+                elements.p2ShotsContainer.innerHTML += `<div class="shot-marker" data-shot="${i}"></div>`;
+            }
+        }
+        
+        // تحديث مؤشرات الركلات بناءً على نتائج shots
+        function updateShotMarkers() {
+            const p1Markers = elements.p1ShotsContainer.querySelectorAll('.shot-marker');
+            const p2Markers = elements.p2ShotsContainer.querySelectorAll('.shot-marker');
+
+            shots.p1.forEach((isHit, index) => {
+                if (p1Markers[index]) {
+                    p1Markers[index].classList.toggle('hit', isHit);
+                    p1Markers[index].style.opacity = '1';
+                } else if (index >= 5 && isHit) {
+                     // جولة مفاجئة: إضافة مؤشر جديد (بشكل أبسط)
+                    elements.p1ShotsContainer.innerHTML += `<div class="shot-marker hit" style="width:15px; height:15px;"></div>`;
+                }
+            });
+
+            shots.p2.forEach((isHit, index) => {
+                if (p2Markers[index]) {
+                    p2Markers[index].classList.toggle('hit', isHit);
+                    p2Markers[index].style.opacity = '1';
+                } else if (index >= 5 && isHit) {
+                    elements.p2ShotsContainer.innerHTML += `<div class="shot-marker hit" style="width:15px; height:15px;"></div>`;
+                }
+            });
+            
+            // إظهار دور اللاعب الحالي باللون الأخضر
+            elements.p1Panel.classList.toggle('current-turn', currentPlayer === 1);
+            elements.p2Panel.classList.toggle('current-turn', currentPlayer === 2);
+        }
+
+        function updateIndicator() {
+            let status = '';
+            let player = playerNames[`p${currentPlayer}`];
+            
+            elements.indicator.classList.remove('sudden-death');
+
+            if (currentShot <= maxInitialShots) {
+                const round = Math.ceil(currentShot / 2);
+                status = `الجولة ${round}/5 - تسديدة ${currentPlayer === 1 ? 'الأولى' : 'الثانية'}`;
+            } else {
+                status = `جولة الترجيح المفاجئ - التسديدة رقم ${currentShot}`;
+                elements.indicator.classList.add('sudden-death');
+            }
+            
+            const currentScore = `${playerNames.p1} ${scores.p1} - ${scores.p2} ${playerNames.p2}`;
+            
+            elements.indicator.innerHTML = `<strong>${player}</strong>: دورك الآن. (${status})<br> النتيجة: ${currentScore}`;
+        }
+
+        function nextShot() {
+            if (currentQuestionIndex + 1 >= questionIndices.length) {
+                 shuffleQuestions(); 
+                 currentQuestionIndex = 0;
+            } else {
+                currentQuestionIndex++;
+            }
+            
+            currentShot++;
+
+            const qIndex = questionIndices[currentQuestionIndex];
+            elements.questionArea.textContent = questions[qIndex].q;
+            
+            updateShotMarkers();
+            updateIndicator();
+        }
+
+        // التحقق من الفوز في أي نقطة
+        function checkWinCondition() {
+            const p1ShotsLeft = 5 - shots.p1.length;
+            const p2ShotsLeft = 5 - shots.p2.length;
+            
+            // 1. الفوز المبكر (خلال الـ 5 جولات الأولى)
+            if (currentShot <= maxInitialShots) {
+                // عدد التسديدات المتبقية لكل لاعب
+                const maxP1Score = scores.p1 + p1ShotsLeft;
+                const maxP2Score = scores.p2 + p2ShotsLeft;
+                
+                if (scores.p1 > maxP2Score) {
+                    endGame(1);
+                    return true;
+                } else if (scores.p2 > maxP1Score) {
+                    endGame(2);
+                    return true;
+                }
+                
+                // إذا أكمل الجميع الـ 5 جولات
+                if (currentShot === maxInitialShots) {
+                    if (scores.p1 !== scores.p2) {
+                        const winner = scores.p1 > scores.p2 ? 1 : 2;
+                        endGame(winner);
+                        return true;
+                    } else {
+                        isSuddenDeath = true;
+                        // تستمر اللعبة
+                        return false;
+                    }
+                }
+            } 
+            
+            // 2. جولة الترجيح المفاجئ (بعد 10 تسديدات)
+            if (isSuddenDeath && currentShot > maxInitialShots && currentShot % 2 === 0) {
+                // يتم الفحص بعد تسديدة اللاعب 2 (أي بعد كل جولة كاملة)
+                if (scores.p1 !== scores.p2) {
+                    const winner = scores.p1 > scores.p2 ? 1 : 2;
+                    endGame(winner);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function processAnswer(userAnswer) {
+            const currentQuestion = questions[questionIndices[currentQuestionIndex]];
+            const isCorrect = (userAnswer === 'yes' && currentQuestion.a === true) || 
+                              (userAnswer === 'no' && currentQuestion.a === false);
+
+            const shotIndex = (currentPlayer === 1) ? shots.p1.length : shots.p2.length;
+
+            if (isCorrect) {
+                scores[`p${currentPlayer}`]++;
+                shots[`p${currentPlayer}`].push(true);
+            } else {
+                shots[`p${currentPlayer}`].push(false);
+            }
+            
+            // تحديث مؤشرات الركلات فوراً
+            updateShotMarkers();
+
+            // فحص شرط الفوز بعد تسجيل النقطة
+            const matchEnded = checkWinCondition();
+            
+            if (!matchEnded) {
+                // تبديل اللاعب والدور التالي
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                nextShot();
+            }
+        }
+        
+        function endGame(winner) {
+            elements.resultText.textContent = `انتهت المباراة! فاز ${playerNames[`p${winner}`]} 🎉`;
+            elements.finalScore.textContent = `النتيجة النهائية: ${playerNames.p1} ${scores.p1} - ${scores.p2} ${playerNames.p2}`;
+            
+            elements.gameContent.style.display = 'none';
+            elements.resultScreen.style.display = 'block';
+        }
+
+        // ربط الأزرار
+        elements.btnYes.addEventListener('click', () => processAnswer('yes'));
+        elements.btnNo.addEventListener('click', () => processAnswer('no'));
+        
+        // إخفاء محتوى اللعبة عند التحميل الأولي
+        elements.gameContent.style.display = 'none';
+        elements.resultScreen.style.display = 'none';
+
+    </script>
+</body>
+</html>
