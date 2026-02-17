@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الخزنة الرقمية</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e0e0e0;
+        }
+
+        .safe-wrapper {
+            background: #2d2d2d;
+            padding: 25px;
+            border-radius: 20px;
+            border: 5px solid #444;
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+            width: 350px;
+            text-align: center;
+        }
+
+        #display {
+            background: #000;
+            color: #ff3e3e;
+            font-size: 2.5rem;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 2px inset #333;
+            letter-spacing: 10px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            background: #3d3d3d;
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px #1a1a1a;
+            transition: all 0.1s;
+        }
+
+        button:active {
+            box-shadow: 0 1px #1a1a1a;
+            transform: translateY(3px);
+        }
+
+        .btn-clear { background: #c0392b; }
+        .btn-ok { background: #27ae60; }
+
+        /* نافذة الرسالة السرية */
+        #secret-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 100;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .letter {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #fdf6e3;
+            color: #2c3e50;
+            padding: 40px;
+            line-height: 1.8;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+            border-radius: 2px;
+            position: relative;
+            text-align: justify;
+        }
+
+        .letter::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: 1px solid #d3d3d3;
+            pointer-events: none;
+        }
+
+        .letter-header {
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2c3e50;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="safe-wrapper" id="safe-ui">
+    <h2 style="margin-top:0; color:#888;">النظام المحمي</h2>
+    <div id="display">****</div>
+    <div class="keypad">
+        <button onclick="press(1)">1</button>
+        <button onclick="press(2)">2</button>
+        <button onclick="press(3)">3</button>
+        <button onclick="press(4)">4</button>
+        <button onclick="press(5)">5</button>
+        <button onclick="press(6)">6</button>
+        <button onclick="press(7)">7</button>
+        <button onclick="press(8)">8</button>
+        <button onclick="press(9)">9</button>
+        <button class="btn-clear" onclick="clearSafe()">C</button>
+        <button onclick="press(0)">0</button>
+        <button class="btn-ok" onclick="checkCode()">OK</button>
+    </div>
+</div>
+
+<div id="secret-overlay">
+    <div class="letter">
+        <div class="letter-header">رسالة مشفرة:</div>
+        <p>
+            كأنك قاعد تقرا في الميساج هذا، أطمن، راهو الحاكم ما فاق بشي وما كشفش سرنا. 
+            اليوم هو النهار الموعود، المهمة متاعنا تبدا وتوفا اليوم، لا تأجيل ولا رجوع. 
+            باش ننتقمو من السيستيم الفاسد اللي دمرنا، السيستيم اللي قلبني في فلوس الأُسيرونس متاع الكونسير اللي كنت باش نداوي بيها، وخلا ولدي يموت بين يديا خاطر ما حبوش يداويوه. 
+            هوما بيدهم اللي طفاو الضو وما حبوش يستعرفو بالحالة النفسية المحطمة متاع أشواق، وخلاوها لين هبلت وسرقت البانكة باش تعيش. 
+            اليوم نتقابلو في وسط محطة الباساج، تونس العاصمة. كون حاضر، خاطر الليلة العاصمة باش تشهد على حاجة كبيرة ما صارتش قبل.
+        </p>
+        <button onclick="location.reload()" style="background:#333; margin-top:20px;">إغلاق الرسالة</button>
+    </div>
+</div>
+
+<script>
+    let currentInput = "";
+    const correctCode = "1106";
+    const displayDiv = document.getElementById('display');
+    const overlay = document.getElementById('secret-overlay');
+
+    function press(num) {
+        if (currentInput.length < 4) {
+            currentInput += num;
+            updateDisplay();
+        }
+    }
+
+    function updateDisplay() {
+        displayDiv.innerText = currentInput.padEnd(4, '*');
+    }
+
+    function clearSafe() {
+        currentInput = "";
+        updateDisplay();
+    }
+
+    function checkCode() {
+        if (currentInput === correctCode) {
+            overlay.style.display = "block";
+            document.getElementById('safe-ui').style.display = "none";
+        } else {
+            displayDiv.style.color = "#ff0000";
+            displayDiv.innerText = "خطأ";
+            setTimeout(() => {
+                currentInput = "";
+                displayDiv.style.color = "#ff3e3e";
+                updateDisplay();
+            }, 1000);
+        }
+    }
+</script>
+
+</body>
+</html>
