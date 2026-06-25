@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Criminal Case Tunisia</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f0f0f0;
+      font-family: 'Tahoma', sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      padding: 25px;
+      background-color: #1e1e1e;
+    }
+    header img {
+      height: 120px;
+      transition: transform 0.3s;
+    }
+    header img:hover {
+      transform: scale(1.05);
+    }
+    header h1 {
+      color: #ff6666;
+      margin: 10px 0 0;
+      font-size: 1.6em;
+    }
+    .cases {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 30px;
+    }
+    .case-card {
+      background-color: #1e1e1e;
+      border-radius: 15px;
+      overflow: hidden;
+      width: 220px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .case-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.7);
+    }
+    .case-card .num {
+      width: 100%;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      font-weight: bold;
+      color: #ff4444;
+      background-color: #2a2a2a;
+    }
+    .case-card h3 {
+      text-align: center;
+      padding: 12px;
+      font-size: 1.1em;
+      color: #ff6666;
+    }
+    .case-card .tag {
+      font-size: 0.8em;
+      color: #9aa4b2;
+      padding: 0 12px 12px;
+      text-align: center;
+    }
+    .content {
+      padding: 25px;
+      display: none;
+      background-color: #1e1e1e;
+      margin: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .content h2 {
+      color: #ff6666;
+      margin-top: 0;
+    }
+    .meta {
+      color: #9aa4b2;
+      font-size: 0.9em;
+      margin-bottom: 12px;
+    }
+    .options label {
+      display: block;
+      margin: 10px 0;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .options label:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    button {
+      margin-top: 15px;
+      margin-left: 8px;
+      padding: 10px 22px;
+      background-color: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background-color: #ff6666;
+      transform: scale(1.05);
+    }
+    .back-btn {
+      background-color: #333;
+    }
+    .back-btn:hover {
+      background-color: #444;
+    }
+    .feedback {
+      margin-top: 12px;
+      font-weight: bold;
+      color: #ffb4b4;
+    }
+    .solution {
+      margin-top: 18px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    footer {
+      text-align: center;
+      padding: 25px;
+      background-color: #1e1e1e;
+      margin-top: 30px;
+    }
+    footer img {
+      height: 60px;
+      transition: transform 0.3s;
+    }
+    footer img:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Criminal Case Tunisia</h1>
+    <p style="color:#9aa4b2;margin:6px 0 0;">اختار القضية وحاول تحل اللغز</p>
+  </header>
+
+  <div class="cases">
+    <div class="case-card" onclick="showCase(1)">
+      <div class="num">01</div>
+      <h3>شكون قتل سلمى</h3>
+    </div>
+    <div class="case-card" onclick="showCase(2)">
+      <div class="num">02</div>
+      <h3>جريمة في منوبة</h3>
+    </div>
+    <div class="case-card" onclick="showCase(3)">
+      <div class="num">03</div>
+      <h3>MC Dali</h3>
+    </div>
+    <div class="case-card" onclick="showCase(4)">
+      <div class="num">04</div>
+      <h3>مقتل مكي غزال</h3>
+      <div class="tag">صفاقس — 6 أوت 2025</div>
+    </div>
+    <div class="case-card" onclick="showCase(5)">
+      <div class="num">05</div>
+      <h3>بئر الغولة</h3>
+      <div class="tag">اختفاء الشيخ صالح بن عمارة</div>
+    </div>
+    <div class="case-card" onclick="showCase(6)">
+      <div class="num">06</div>
+      <h3>مقتل ساندة</h3>
+      <div class="tag">جريمة منفّذة بعقد</div>
+    </div>
+  </div>
+
+  <!-- القضية 1 -->
+  <div id="case1" class="content">
+    <h2>القضية 1: شكون قتل سلمى</h2>
+    <div class="options">
+      <label><input type="radio" name="c1"> خمّنتها بالكاميرا</label>
+      <label><input type="radio" name="c1" data-correct="true"> خمّنتها من الإيميلات في التليفون</label>
+      <label><input type="radio" name="c1"> خمّنتها من صورة الكرهبة في البحيرة</label>
+      <label><input type="radio" name="c1"> خمّنتها بتقرير الطبيب</label>
+    </div>
+    <button onclick="checkAnswer(1)">خمّنتها — تحقق</button>
+    <button onclick="showSolution(1)">استسلمت — وريني الحل</button>
+    <button class="back-btn" onclick="backToCases()">رجوع للقضايا</button>
+    <div id="solution1" class="solution" style="display:none;">
+      <p>كان الهاتف هو العنصر الأساسي في كشف الجريمة. رمز القفل ما كانش سهل، لكن تاريخ ميلاد توأم سلمى كان هو الحل. زوجها السابق صرّح أنّه رجع لتونس في يوم عيد ميلادهم، وبعد مراجعة سجلّات الرحلات اكتشفنا أنّ آخر رحلة له كانت يوم 3 فيفري، وبالتالي الرمز هو 0302. داخل الهاتف، وتحديدًا في قسم البريد الإلكتروني، ظهرت دلائل تفضح كريم في مناسبتين: الأولى ادّعى أنّه شاهد مباراة لريال مدريد، بينما الرسائل الإلكترونية أكدت أنّ الدوريات الأوروبية لكرة القدم كانت متوقفة مؤقتًا وفقًا للأخبار الواردة في البريد الإلكتروني. أيضًا، ادّعى أنّه رجع للبيت بسيارة أجرة، لكن الرسائل نفسها أشارت إلى وجود إضراب للتاكسيات. الحقيقة أنّه هو الفاعل، لأنّ سلمى استحوذت على منزله الفخم، والأهم من ذلك أنها رفضت إدراجه كأب للتوأم.</p>
+    </div>
+  </div>
+
+  <!-- القضية 2 -->
+  <div id="case2" class="content">
+    <h2>القضية 2: جريمة في منوبة</h2>
+    <div class="options">
+      <label><input type="radio" name="c2" data-correct="true"> خمّنتها على خاطر واحد كذب في أنشطته</label>
+      <label><input type="radio" name="c2"> خمّنتها من صورة الكاميرا</label>
+      <label><input type="radio" name="c2"> خمّنتها من طبيعة العلاقات بين الشخصيات</label>
+      <label><input type="radio" name="c2"> خمّنتها من كلام الشاهد</label>
+    </div>
+    <button onclick="checkAnswer(2)">خمّنتها — تحقق</button>
+    <button onclick="showSolution(2)">استسلمت — وريني الحل</button>
+    <button class="back-btn" onclick="backToCases()">رجوع للقضايا</button>
+    <div id="solution2" class="solution" style="display:none;">
+      <p>القاتلة في هذه القضية هي مريم. كان دافعها المعاملة السيئة المستمرة من طرف آدم، الذي قام بتسريب صورها والإساءة إليها. في شهادتها، ادّعت مريم أنّها نامت مبكرًا ولم تغادر منزلها، لكن الحقيقة أنّها كذبت. فقد خرجت خلسة في الليل بعد أن طلبت من آدم أن يلتقيا، وهناك نفّذت جريمتها. ما فضحها هو تذكرة شراء من مجلة، إذ اشترت وجبة خفيفة قبل لقائه، وظهر تاريخ عملية الشراء على الفاتورة متطابقًا مع وقت وقوع الجريمة، وهو الدليل الذي أدانها.</p>
+    </div>
+  </div>
+
+  <!-- القضية 3 -->
+  <div id="case3" class="content">
+    <h2>القضية 3: MC Dali</h2>
+    <div class="options">
+      <label><input type="radio" name="c3"> خمّنتها من الخريطة</label>
+      <label><input type="radio" name="c3"> خمّنتها من الأشياء اللي لقيتها في الجيب</label>
+      <label><input type="radio" name="c3" data-correct="true"> استعملت حسابات السوشيال ميديا</label>
+      <label><input type="radio" name="c3"> كلام الطبيب خلاني نخمن</label>
+    </div>
+    <button onclick="checkAnswer(3)">خمّنتها — تحقق</button>
+    <button onclick="showSolution(3)">استسلمت — وريني الحل</button>
+    <button class="back-btn" onclick="backToCases()">رجوع للقضايا</button>
+    <div id="solution3" class="solution" style="display:none;">
+      <p>القاتلة في هذه القضية هي لاميا، وكان دافعها عاطفي بالأساس. فقد تعرّفت على MC Dali عبر مواقع التواصل الاجتماعي، وبعد فترة من الحديث بينهما شعرت أنّه أصبح بارداً ويتجاهلها، الأمر الذي ولّد عندها شعوراً بالغضب والرغبة في الانتقام. الدليل الحاسم جاء من أرشيف قصصها على إنستغرام؛ فعند الدخول إلى حساب MC Dali الحقيقي على التطبيق، يظهر ضمن قائمة متابَعيه حساب لاميا. وفي إحدى القصص القديمة على حسابها، ظهر بالصدفة في الخلفية مسدس مطابق للسلاح الذي استُعمل في الجريمة، وهو ما كشف حقيقتها.</p>
+    </div>
+  </div>
+
+  <!-- القضية 4 -->
+  <div id="case4" class="content">
+    <h2>القضية 4: مقتل مكي غزال — صفاقس، 6 أوت 2025</h2>
+    <div class="options">
+      <label><input type="radio" name="c4" data-correct="true"> باستخدام منشورات فيسبوك</label>
+      <label><input type="radio" name="c4"> باستخدام صور كاميرا المراقبة</label>
+      <label><input type="radio" name="c4"> شهادة محمد السلّمي</label>
+      <label><input type="radio" name="c4"> صور يوم الماتش</label>
+      <label><input type="radio" name="c4"> صورة الشنطة</label>
+    </div>
+    <button onclick="checkAnswer(4)">خمّنتها — تحقق</button>
+    <button onclick="showSolution(4)">استسلمت — وريني الحل</button>
+    <button class="back-btn" onclick="backToCases()">رجوع للقضايا</button>
+    <div id="solution4" class="solution" style="display:none;">
+      <p><strong>الدافع: عقد السعودية والحسد 🔥</strong><br>
+      التحقيقات كشفت إنّو وسام كان مغروم برشة بفكرة إنّو يكون هو اللاعب النجم اللي تجيه العروض الكبيرة. الضحية، مكي غزال، كان نجم الإتحاد العاصمة (USMA) اللي طالع بقوة، ووقتها الأخبار الكل تحكي على عقد خيالي من السعودية باش يشريه الصيف الجاي.
+      وسام كان يشوف روحو هو الأحق بالعرض هذا، وكان متأكد إنّو كان جا يلعب في بلاصة مكي في فريق الإتحاد، راهو هو اللي خذا الفرصة. الغيرة نتاعو تحولت لحقد أعمى خلّاه يخطط باش ينحي مكي من الصورة نهائيًا.</p>
+      <p><strong>الدليل القاطع: الحُجّة الكاذبة (Faux Alibi) 🤥</strong><br>
+      الحاجة اللي رسّات إنّو وسام هو الجاني هي الحُجّة الكاذبة اللي قدّمها باش يوهم المحققين إنّو كان في تونس العاصمة:</p>
+      <ul>
+        <li>تردّد صفاقس: وسام ادّعى إنّو سمع الماتش في راديو الكرهبة على تردد Diwan FM 91.2 FM. التردد هذا هو تردد صفاقس، أما تردد تونس العاصمة هو 93.5 FM. هذا يثبت إنّو وسام كان متواجد في صفاقس (أو محيطها) وقت الجريمة.</li>
+        <li>الكذب على فريقه: ادّعى إنّو كان يتريني مع فريق جديد في العاصمة. لكن كي رجعنا للتشكيلات، وتحديدًا لتغريدة فريق مستقبل المرسى، تبيّن إنّو اسم وسام ورديني ماهوش موجود جملة في التشكيلة الرسمية. اللاعب الوحيد اللي يحمل اسم "وسام" هو وسام بوسنينة.</li>
+      </ul>
+      <p>وسام كان في صفاقس، عندو دافع قوي جداً (الحسد على عقد السعودية)، وقدم حُجّة مزورة بالكامل باش يبعد الشبهة عليه. هذا يثبت تورطو المباشر في قتل مكي غزال في ملعب الطيب المهيري بصفاقس نهار 6 أوت 2025.</p>
+    </div>
+  </div>
+
+  <!-- القضية 5 -->
+  <div id="case5" class="content">
+    <h2>القضية 5: بئر الغولة 🇹🇳</h2>
+    <div class="meta">اختفاء الشيخ صالح بن عمارة — 10 سبتمبر 2008</div>
+    <div class="options">
+      <label><input type="radio" name="c5" data-correct="true"> من خلال ما في القيء</label>
+      <label><input type="radio" name="c5"> الصلوات والسحر الموجودين قريب البير</label>
+      <label><input type="radio" name="c5"> استعمال خريطة جندوبة</label>
+    </div>
+    <button onclick="checkAnswer(5)">خمّنتها — تحقق</button>
+    <button onclick="showSolution(5)">استسلمت — وريني الحل</button>
+    <button class="back-btn" onclick="backToCases()">رجوع للقضايا</button>
+    <div id="solution5" class="solution" style="display:none;">
+      <p><strong>القاتل هو خليفة (Khalifa).</strong></p>
+      <p><strong>الدليل القاطع: القيء ومضادات الاكتئاب</strong><br>
+      التحريات الأخيرة ركّزت على دليل جديد تم إيجاده في محيط البير وهو القيء بالقرب من مكان الحادث. بعد التحاليل، تبيّن إنّو القيء يحتوي على عناصر دواء مضاد للاكتئاب، وهي حبوب كان ياخذها خليفة! هذا الدليل حوّل خليفة من مجرد شخص في القرية إلى المشتبه به الرئيسي وربطو مباشرة بمسرح الجريمة نهار الفجر.</p>
+      <p><strong>الدافع الحقيقي: هوس الأرواح والجن 👻</strong><br>
+      خليفة كان متأكد إنّو البير مسكونة، وإنّو الشيخ صالح كان يقدّم قرابين ويستغل البير بطريقة سحرية تخلّي الأرواح الصغار محجوزة ومحبوسة غادي. خليفة كان يظن إنّو باش يحرّر الأرواح هاذي من البير ومن سيطرة الشيخ صالح. بالنسبة ليه، قتل الشيخ صالح ودزّو فيها كان طقس تطهير ضروري.</p>
+      <p>الخلاصة: خليفة، اللي كان يعاني من مشاكل نفسية، تمكّن من الوصول للشيخ صالح نهار 10 سبتمبر 2008 وهو لابس قشابية وراكب على الموتور 103، وبعد ما قام بالجريمة، خلا وراه الدليل القاطع اللي كشف اللغز بعد سنين.</p>
+    </div>
+  </div>
+
+  <!-- القضية 6 -->
+  <div id="case6" class="content">
+    <h2>القضية 6: مقتل ساندة — منفذة بعقد 🔪</h2>
+    <div class="options">
+      <label><input type="radio" name="c6"> صفحة ويكيبيديا</label>
+      <label><input type="radio" name="c6"> حالة الطقس</label>
+      <label><input type="radio" name="c6"> ردود الفعل على السوشال ميديا</label>
+      <label><input type="radio" name="c6" data-correct="true"> صورة موقع التصوير (Movie set)</label>
+    </div>
+    <button onclick="checkAnswer(6)">خمّنتها — تحقق</button>
+    <button onclick="showSolution(6)">استسلمت — وريني الحل</button>
+    <button class="back-btn" onclick="backToCases()">رجوع للقضايا</button>
+    <div id="solution6" class="solution" style="display:none;">
+      <p><strong>الدافع الحقيقي: عملية الأم والخيانة الزوجية 💔💰</strong><br>
+      جيهان كانت محتاجة لفلوس كبيرة باش تعمل عملية جراحية مستعجلة لأمها. إكرام (زوجة مازن) اكتشفت خيانة راجلها مع ساندة ودڨّت مبلغ كبير لجيهان باش تقتل ساندة.</p>
+      <p><strong>تفنيد حُجّة جيهان بالأدلة الرقمية والجغرافية 🗺️📞</strong><br>
+      فشل حُجّة التواجد في البلدية: جيهان ادّعت إنّها قضات نهارها في البلدية تكمّل في معاملة، أما الخرائط تبيّن إنّو مكان الجريمة قريب برشة من البلدية.
+      المكالمات الهاتفية: لقينا مكالمات طويلة ومتكررة مع رقم راجع لإكرام، وهذا يثبت التنسيق بين جيهان وإكرام.</p>
+      <p>النتيجة النهائية: جيهان هي المنفّذة مقابل فلوس عملية أمها، وإكرام هي العقل المدبّر اللي دفعت الثمن للانتقام.</p>
+    </div>
+  </div>
+
+  <footer>
+    <a href="https://www.instagram.com/criminal.case.tn/" target="_blank" style="color:#ff6666;text-decoration:none;font-weight:bold;">
+      تابعونا على Instagram @criminal.case.tn
+    </a>
+  </footer>
+
+  <script>
+    function showCase(num) {
+      document.querySelectorAll('.content').forEach(el => el.style.display = 'none');
+      document.querySelector('.cases').style.display = 'none';
+      document.getElementById('case' + num).style.display = 'block';
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function backToCases() {
+      document.querySelectorAll('.content').forEach(el => el.style.display = 'none');
+      document.querySelector('.cases').style.display = 'flex';
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function checkAnswer(num) {
+      const options = document.querySelectorAll('#case'+num+' .options input');
+      let selected = Array.from(options).find(opt => opt.checked);
+      if (!selected) { alert('إختر إجابة!'); return; }
+      const solutionDiv = document.getElementById('solution'+num);
+      if (selected.dataset.correct === 'true') {
+        solutionDiv.style.display = 'block';
+      } else {
+        alert('استمر في اللعب، يمكن فاتتك بعض التفاصيل.');
+      }
+    }
+
+    function showSolution(num) {
+      document.getElementById('solution'+num).style.display = 'block';
+    }
+  </script>
+</body>
+</html>
