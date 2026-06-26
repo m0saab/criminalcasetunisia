@@ -211,6 +211,16 @@
     <h3>مقتل ساندة</h3>
     <div class="tag">جريمة منفّذة بعقد</div>
   </div>
+  <div class="case-card" onclick="showCase(7)">
+    <div class="num">07</div>
+    <h3>العثور على فريال</h3>
+    <div class="tag">كذبة الحضور في الجامعة</div>
+  </div>
+  <div class="case-card" onclick="showCase(8)">
+    <div class="num">08</div>
+    <h3>جريمة في الطائرة</h3>
+    <div class="tag">الجريمة الملفّقة</div>
+  </div>
 </div>
 
 <!-- ═══════════ CASE 1 ═══════════ -->
@@ -406,6 +416,68 @@
   </div>
 </div>
 
+
+<!-- ═══════════ CASE 7 ═══════════ -->
+<div id="case7" class="content">
+  <h2>القضية 7: العثور على فريال</h2>
+
+  <div class="section-label">🔍 شكون المشتبه به؟</div>
+  <div class="suspects" id="suspects7">
+    <button class="suspect-btn" onclick="pickSuspect(7,'HSAN')">حسان</button>
+    <button class="suspect-btn" onclick="pickSuspect(7,'OTHMAN')">عثمان</button>
+    <button class="suspect-btn" onclick="pickSuspect(7,'ACHRAF')">أشرف</button>
+  </div>
+
+  <div class="section-label">🧩 كيفاش عرفت؟</div>
+  <div class="options" id="options7">
+    <label><input type="radio" name="c7" data-correct="true"> تسجيل الدخول إلى موقع الجامعة</label>
+    <label><input type="radio" name="c7"> الاعتماد على شهادة إيهاب</label>
+    <label><input type="radio" name="c7"> التعرّف على الأغراض الموجودة داخل السيارة</label>
+  </div>
+
+  <div id="feedback7" class="feedback"></div>
+  <div class="btn-row">
+    <button onclick="checkAnswer(7,'HSAN')">خمّنتها — تحقق</button>
+    <button class="tapout-btn" onclick="showSolution(7)">استسلمت — وريني الحل</button>
+    <button class="back-btn" onclick="backToCases()">رجوع للقضايا</button>
+  </div>
+  <div id="solution7" class="solution" style="display:none;">
+    <p><strong>الفاعل هو حسان.</strong></p>
+    <p>حسان تورّط لأنّه ادّعى أنّه زميل فريال في الدراسة، وقال إنّه كان حاضرًا في حصة الإنجليزية على الساعة العاشرة. لكن عند الدخول إلى موقع الجامعة باستعمال رقم بطاقة فريال وبريدها الإلكتروني، ثم فتح الرسائل المرسلة من أستاذ الإنجليزية، يتبيّن أنّ حسان كان غائبًا خلال تلك الحصة. هذا يكشف أنّ حجّته كاذبة ويثبت أنّه هو الفاعل.</p>
+  </div>
+</div>
+
+<!-- ═══════════ CASE 8 ═══════════ -->
+<div id="case8" class="content">
+  <h2>القضية 8: جريمة في الطائرة</h2>
+
+  <div class="section-label">🔍 شكون المشتبه به؟</div>
+  <div class="suspects" id="suspects8">
+    <button class="suspect-btn" onclick="pickSuspect(8,'YOUSEF')">يوسف</button>
+    <button class="suspect-btn" onclick="pickSuspect(8,'LENA')">لينا</button>
+    <button class="suspect-btn" onclick="pickSuspect(8,'FAUZI')">فوزي</button>
+    <button class="suspect-btn" onclick="pickSuspect(8,'OTHER')">شخص آخر</button>
+  </div>
+
+  <div class="section-label">🧩 كيفاش عرفت؟</div>
+  <div class="options" id="options8">
+    <label><input type="radio" name="c8" data-correct="true"> الضحية لفّق هذه الجريمة</label>
+    <label><input type="radio" name="c8"> وجود تناقض في كلام أحد الشهود</label>
+    <label><input type="radio" name="c8"> حلّ الجريمة بفضل ملاحظة الطبيب</label>
+  </div>
+
+  <div id="feedback8" class="feedback"></div>
+  <div class="btn-row">
+    <button onclick="checkAnswer(8,'OTHER')">خمّنتها — تحقق</button>
+    <button class="tapout-btn" onclick="showSolution(8)">استسلمت — وريني الحل</button>
+    <button class="back-btn" onclick="backToCases()">رجوع للقضايا</button>
+  </div>
+  <div id="solution8" class="solution" style="display:none;">
+    <p><strong>نبيل هو الذي لفّق الجريمة.</strong></p>
+    <p>الدليل موجود داخل هاتفه. عند الدخول إلى الهاتف والحصول على كلمة سر تطبيق المستثمر، يظهر أنّه دفع مؤخرًا تأمينًا ضدّ الاعتداء. كذلك، عند فتح متجر التطبيقات والبحث عن تطبيق Truecaller، ثم البحث عن أحد الأرقام التي وصلت منه رسائل إلى نبيل، يتبيّن أنّ الرقم يعود إلى نفس الطبيب الذي زوّر الملاحظة الطبية الموجودة داخل الكتاب. لذلك لم تكن هناك جريمة حقيقية؛ نبيل هو الذي فبرك كل شيء.</p>
+  </div>
+</div>
+
 <footer>
   <a href="https://www.instagram.com/criminal.case.tn/" target="_blank" style="color:#ff6666;text-decoration:none;font-weight:bold;">
     تابعونا على Instagram @criminal.case.tn
@@ -448,7 +520,7 @@
   function nameToArabic(name) {
     const map = { RAMI:'رامي', KARIM:'كريم', MOUNA:'مونة', MARIEM:'مريم', GHASSEN:'غسّان', SALIM:'سليم',
       SAMI:'سامي', FARES:'فارس', LAMIA:'لاميا', WISSAM:'وسام', IBRAHIM:'إبراهيم',
-      MABROUK:'مبروك', AZOUZ:'عزوز', KHLIFA:'خليفة', MAZEN:'مازن', WAHBI:'وهبي', JIHEN:'جيهان' };
+      MABROUK:'مبروك', AZOUZ:'عزوز', KHLIFA:'خليفة', MAZEN:'مازن', WAHBI:'وهبي', JIHEN:'جيهان', HSAN:'حسان', OTHMAN:'عثمان', ACHRAF:'أشرف', YOUSEF:'يوسف', LENA:'لينا', FAUZI:'فوزي', OTHER:'شخص آخر' };
     return map[name] || name;
   }
 
