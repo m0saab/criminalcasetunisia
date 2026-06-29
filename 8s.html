@@ -321,6 +321,7 @@
   <div class="suspects" id="suspects4">
     <button class="suspect-btn" onclick="pickSuspect(4,'WISSAM')">وسام</button>
     <button class="suspect-btn" onclick="pickSuspect(4,'IBRAHIM')">إبراهيم</button>
+    <button class="suspect-btn" onclick="pickSuspect(4,'ACHRAF')">أشرف</button>
   </div>
 
   <div class="section-label">🧩 كيفاش عرفت؟</div>
@@ -341,7 +342,8 @@
   <div id="solution4" class="solution" style="display:none;">
     <p><strong>الدافع: عقد السعودية والحسد 🔥</strong><br>
     التحقيقات كشفت إنّو وسام كان مغروم برشة بفكرة إنّو يكون هو اللاعب النجم اللي تجيه العروض الكبيرة. الضحية، مكي غزال، كان نجم الإتحاد العاصمة (USMA) اللي طالع بقوة، ووقتها الأخبار الكل تحكي على عقد خيالي من السعودية.</p>
-    <p><strong>الدليل القاطع: الحُجّة الكاذبة 🤥</strong></p>
+    <p><strong>الدليل القاطع: الحُجّة الكاذبة 🤥</strong><br>
+    <em>(هذه الأدلّة تمّ اكتشافها عند فحص منشورات السوشيال ميديا الموجودة في الهاتف)</em></p>
     <ul>
       <li>تردّد صفاقس: وسام ادّعى إنّو سمع الماتش في راديو الكرهبة على تردد Diwan FM 91.2 FM. التردد هذا هو تردد صفاقس، أما تردد تونس العاصمة هو 93.5 FM.</li>
       <li>الكذب على فريقه: ادّعى إنّو كان يتريني مع فريق جديد في العاصمة. لكن كي رجعنا للتشكيلات، اسم وسام ورديني ماهوش موجود في تشكيلة مستقبل المرسى.</li>
@@ -519,8 +521,8 @@
 
   function nameToArabic(name) {
     const map = { RAMI:'رامي', KARIM:'كريم', MOUNA:'مونة', MARIEM:'مريم', GHASSEN:'غسّان', SALIM:'سليم',
-      SAMI:'سامي', FARES:'فارس', LAMIA:'لاميا', WISSAM:'وسام', IBRAHIM:'إبراهيم',
-      MABROUK:'مبروك', AZOUZ:'عزوز', KHLIFA:'خليفة', MAZEN:'مازن', WAHBI:'وهبي', JIHEN:'جيهان', HSAN:'حسان', OTHMAN:'عثمان', ACHRAF:'أشرف', YOUSEF:'يوسف', LENA:'لينا', FAUZI:'فوزي', OTHER:'شخص آخر' };
+      SAMI:'سامي', FARES:'فارس', LAMIA:'لاميا', WISSAM:'وسام', IBRAHIM:'إبراهيم', ACHRAF:'أشرف',
+      MABROUK:'مبروك', AZOUZ:'عزوز', KHLIFA:'خليفة', MAZEN:'مازن', WAHBI:'وهبي', JIHEN:'جيهان', HSAN:'حسان', OTHMAN:'عثمان', YOUSEF:'يوسف', LENA:'لينا', FAUZI:'فوزي', OTHER:'شخص آخر' };
     return map[name] || name;
   }
 
